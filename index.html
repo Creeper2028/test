@@ -72,7 +72,7 @@
       top: 8%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 900px;
+      width: min(900px, 92vw);
       height: 30px;
       background: linear-gradient(to top, rgb(35, 35, 35) 25%, rgb(22, 22, 22) 60%, rgb(7, 7, 7) );
       border: 1px solid #393939;
@@ -120,7 +120,7 @@
     .add-xp-btn {
       position: fixed;
       top: 8%;
-      left: calc(50% + 460px);
+      left: calc(50% + min(460px, 46vw));
       transform: translateY(-50%);
       width: 40px;
       height: 40px;
@@ -143,7 +143,7 @@
     .remove-xp-btn {
       position: fixed;
       top: 8%;
-      left: calc(50% + 415px);
+      left: calc(50% + min(415px, 41.5vw));
       transform: translateY(-50%);
       width: 40px;
       height: 40px;
@@ -186,10 +186,12 @@
 .side-panel {
   position: fixed;
   top: 6%;
-  right: -37.3%;
+  right: 0%;
   width: 700px;
   height: 90%;
+  max-width: 90vw;
   max-height: 850px;
+  transform: translateX(100%); 
   background: #1c1c1c;
   border: 1px solid #3e3b2b;
   border-radius: 12px;
@@ -241,7 +243,7 @@
 
 .share-build-btn {
   position: absolute;
-  top: 56px;              /* sits below New Build */
+  top: 56px;            
   right: 20px;
   padding: 5px 12px;
   background: #1c1c1c;
@@ -272,8 +274,7 @@
 }
 
 body.side-panel-open .side-panel {
-
-  right: 32%;
+  transform: translateX(-85%); 
   pointer-events: auto;
 }
 
@@ -486,21 +487,21 @@ body.side-panel-open .side-panel-toggle {
 
 
    .TotalTier {
-      position: fixed;
-      bottom: 13%;
-      left: 32.5%;
-      color: var(--category-color, #ffffff);
-      font-size: 32px;
-      font-family: monospace;
-      z-index: 100; 
-      background: none;
-      display: block; 
-    }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  color: var(--category-color, #fff);
+  z-index: 2;
+  pointer-events: none;
+  font-family: monospace;
+}
 
     .skill-point-display {
       position: fixed;
       bottom: 12.5%;
-      left: 5.6%;
+      left: 5.5%;
       color: #ffffff;
       font-size: 44px;
       font-family: monospace;
@@ -538,16 +539,18 @@ body.side-panel-open .side-panel-toggle {
       background: none;
       position: fixed;
       top: 50%;
-      left: 49%;
+      left: 50%;
+      max-width: 95vw;
       transform: translate(-50%, -50%);
       display: flex;
-      gap: 130px;
+      gap: clamp(20px, 4vw, 80px);
       z-index: 10;
     }
 
     .button-row button {
-      width: 150px;
-      height: 150px;
+      width: clamp(90px, 12vw, 150px);
+      height: clamp(90px, 12vw, 150px);
+      font-size: 16px;
       top: -7%;
       font-size: 16px;
       border: 0;
@@ -557,6 +560,7 @@ body.side-panel-open .side-panel-toggle {
     }
 
     .CategoryTier {
+      position: relative;
       width: 50px;
       height: 50px;
       background-image: url('Tier.png');
@@ -565,7 +569,6 @@ body.side-panel-open .side-panel-toggle {
       background-position: center;
       margin: 0 auto;
       z-index: 1;
-      position: relative;
       left: 36%;
       transform: translateX(-50%);
     }
@@ -746,6 +749,7 @@ border-radius: 30%;
 
     .viewport {
       position: absolute;
+      min-height: 400px;
       inset: 0;
       overflow: hidden;
       cursor: grab;
@@ -872,23 +876,6 @@ border-radius: 30%;
 
     .skill-info-panel.visible {
       display: flex;
-    }
-
-    .info-icon-container {
-      position: absolute;
-      width: 100%;
-      height: 35%;
-      right: 0%;
-      bottom: 80%;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      z-index: 5;
     }
 
     .info-type {
@@ -1185,7 +1172,6 @@ border-radius: 30%;
   <button class="Return" id="returnButton"><-</button>
 
   <div class="skill-info-panel" id="skillInfoPanel">
-    <div class="info-icon-container" id="infoIcon"></div>
     <div class="info-type" id="infoType">Passive</div>
     <div class="info-title" id="infoName">Spot The Gap</div>
     <div class="info-subtitle" id="infoBranch">[Conditional Damage Buff]</div>
@@ -1601,7 +1587,7 @@ border-radius: 30%;
     const uiInfoBranch = document.getElementById('infoBranch');
     const uiInfoDesc = document.getElementById('infoDesc');
     const uiInfoMissing = document.getElementById('infoMissing');
-    const uiInfoIcon = document.getElementById('infoIcon');
+
     const infoUnlockBtn = document.getElementById('infoUnlockBtn');
     const infoCostValue = document.getElementById('infoCostValue');
     const costDisplay = document.getElementById('infoCostDisplay');
@@ -1961,7 +1947,7 @@ function refreshCurrentPanel() {
       uiInfoName.textContent = data.name;
       uiInfoBranch.textContent = data.branch;
       uiInfoDesc.textContent = data.desc;
-      uiInfoIcon.style.backgroundImage = data.icon ? `url('${data.icon}')` : 'none';
+
 
       infoUnlockBtn.dataset.skill = skillId;
       infoUnlockBtn.dataset.group = groupName;
