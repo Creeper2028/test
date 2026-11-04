@@ -2131,39 +2131,55 @@ window.addEventListener('keydown', (e) => {
 
 
 // Build load section
+const FORMAT_VERSION = 1;
 
-const SKILL_INDEX = {};
+const SKILL_INDEX = {
+  Instincts:  ['i1','i2','i3','i4','i5','i6','i7','i8','i9','i10','i11','i12',
+               'i13','i14','i15','i16','i17','i18','i19','i20','i21','i22','i23','i24'],
+  Fortitude:  ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11','f12',
+               'f13','f14','f15','f16','f17','f18','f19','f20','f21','f22','f23','f24'],
+  Prudence:   ['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','p11','p12',
+               'p13','p14','p15','p16','p17','p18','p19','p20','p21','p22','p23'],
+  Temperance: ['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13',
+               't14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','t25','t26','t27','t28'],
+  Haste:      ['h1','h2','h3','h4','h5','h6','h7','h8','h9','h10','h11','h12','h13',
+               'h14','h15','h16','h17','h18','h19','h20','h21','h22','h23','h24','h25',
+               'h26','h27','h28','h29','h30','h31'],
+};
 Object.entries(skillsData).forEach(([group, skills]) => {
-  SKILL_INDEX[group] = Object.keys(skills); 
+  const known = new Set(SKILL_INDEX[group] || []);
+  Object.keys(skills).forEach(id => {
+    if (!known.has(id)) console.warn(`[share] ${group}:${id} missing from SKILL_INDEX`);
+  });
 });
 
 const shareBuildBtn = document.getElementById('shareBuildBtn');
 
 
 function encodeBuild() {
-  // 1 byte grade, 1 byte XP, 2 bytes points, then bitmask per category (4 bytes each)
   const groups = Object.keys(SKILL_INDEX);
-  const bytes = [];
-
-  bytes.push(currentGrade & 0xFF);
-  bytes.push(currentXP & 0xFF);
-  bytes.push(skillPoints & 0xFF);
-  bytes.push(0); // padding/reserved
+const bytes = [
+      FORMAT_VERSION,
+    currentGrade & 0xFF,
+    currentXP & 0xFF,
+    skillPoints & 0xFF,
+    0
+  ];
 
   groups.forEach(group => {
-    const ids = SKILL_INDEX[group];
-    const words = new Uint32Array(Math.ceil(ids.length / 32));
-    ids.forEach((id, i) => {
-      if (unlockedSkills.has(`${group}:${id}`)) {
-        words[i >> 5] |= (1 << (i & 31));
-      }
-    });
-    words.forEach(w => {
-      bytes.push(w & 0xFF, (w >>> 8) & 0xFF, (w >>> 16) & 0xFF, (w >>> 24) & 0xFF);
-    });
+  const ids = SKILL_INDEX[group];
+  const words = new Uint32Array(Math.ceil(ids.length / 32));
+  ids.forEach((id, i) => {
+    if (unlockedSkills.has(`${group}:${id}`)) {
+      words[i >> 5] |= (1 << (i & 31));
+    }
   });
+  words.forEach(w => {
+    bytes.push(w & 0xFF, (w >>> 8) & 0xFF, (w >>> 16) & 0xFF, (w >>> 24) & 0xFF);
+  });
+});
 
-  // base64url the Uint8Array
+
   const b64 = btoa(String.fromCharCode(...bytes))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return b64;
@@ -2176,11 +2192,14 @@ function decodeBuild(str) {
     const bin = atob(padded);
     const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
 
-    let i = 0;
+        let i = 0;
+    const version = bytes[i++];
+    if (version !== FORMAT_VERSION) {
+      return null;} 
     const g = bytes[i++];
     const x = bytes[i++];
     const p = bytes[i++];
-    i++; // reserved
+    i++; 
 
     const skills = [];
     Object.keys(SKILL_INDEX).forEach(group => {
@@ -2264,18 +2283,6 @@ shareBuildBtn.addEventListener('click', async () => {
   }, 1600);
 });
 
-function loadBuildFromHash() {
-  const m = location.hash.match(/build=([A-Za-z0-9\-_]+)/);
-  if (!m) return false;
-  const payload = decodeBuild(m[1]);
-  if (!payload) return false;
-  const ok = applyBuild(payload);
-  if (ok) {
-    saveState();
-  }
-  return ok;
-}
-
 
 
 const newBuildBtn = document.getElementById('newBuildBtn');
@@ -2316,15 +2323,12 @@ function loadBuildFromHash() {
 
   const payload = decodeBuild(m[1]);
   if (!payload) return false;
-
   if (!applyBuild(payload)) return false;
 
   saveState();
-  history.replaceState(null, '', location.pathname + location.search);
 
   return true;
 }
-
 
 if (!loadBuildFromHash()) {
   loadState();
