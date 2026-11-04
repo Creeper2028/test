@@ -211,7 +211,7 @@
     background-color 0.2s;
 
 
-  pointer-events: none;
+  pointer-events: auto;
 
 
 }
@@ -2131,21 +2131,41 @@ window.addEventListener('keydown', (e) => {
 
 
 // Build load section
+
+const SKILL_INDEX = {};
+Object.entries(skillsData).forEach(([group, skills]) => {
+  SKILL_INDEX[group] = Object.keys(skills); 
+});
+
 const shareBuildBtn = document.getElementById('shareBuildBtn');
 
 
 function encodeBuild() {
-  const payload = {
-    g: currentGrade,
-    x: currentXP,
-    p: skillPoints,
-    s: Array.from(unlockedSkills)
-  };
-  const json = JSON.stringify(payload);
-  const b64 = btoa(unescape(encodeURIComponent(json)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  // 1 byte grade, 1 byte XP, 2 bytes points, then bitmask per category (4 bytes each)
+  const groups = Object.keys(SKILL_INDEX);
+  const bytes = [];
+
+  bytes.push(currentGrade & 0xFF);
+  bytes.push(currentXP & 0xFF);
+  bytes.push(skillPoints & 0xFF);
+  bytes.push(0); // padding/reserved
+
+  groups.forEach(group => {
+    const ids = SKILL_INDEX[group];
+    const words = new Uint32Array(Math.ceil(ids.length / 32));
+    ids.forEach((id, i) => {
+      if (unlockedSkills.has(`${group}:${id}`)) {
+        words[i >> 5] |= (1 << (i & 31));
+      }
+    });
+    words.forEach(w => {
+      bytes.push(w & 0xFF, (w >>> 8) & 0xFF, (w >>> 16) & 0xFF, (w >>> 24) & 0xFF);
+    });
+  });
+
+  // base64url the Uint8Array
+  const b64 = btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return b64;
 }
 
@@ -2153,10 +2173,31 @@ function decodeBuild(str) {
   try {
     const b64 = str.replace(/-/g, '+').replace(/_/g, '/');
     const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
-    const json = decodeURIComponent(escape(atob(padded)));
-    return JSON.parse(json);
+    const bin = atob(padded);
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+
+    let i = 0;
+    const g = bytes[i++];
+    const x = bytes[i++];
+    const p = bytes[i++];
+    i++; // reserved
+
+    const skills = [];
+    Object.keys(SKILL_INDEX).forEach(group => {
+      const ids = SKILL_INDEX[group];
+      const words = Math.ceil(ids.length / 32);
+      for (let w = 0; w < words; w++) {
+        const word = bytes[i++] | (bytes[i++] << 8) | (bytes[i++] << 16) | (bytes[i++] << 24);
+        ids.forEach((id, bit) => {
+          if ((bit >> 5) === w && (word & (1 << (bit & 31)))) {
+            skills.push(`${group}:${id}`);
+          }
+        });
+      }
+    });
+
+    return { g, x, p, s: skills };
   } catch (e) {
-    console.warn('Invalid build payload:', e);
     return null;
   }
 }
@@ -2236,7 +2277,7 @@ function loadBuildFromHash() {
 }
 
 
- // New build  section
+
 const newBuildBtn = document.getElementById('newBuildBtn');
 
 newBuildBtn.addEventListener('click', () => {
