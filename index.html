@@ -2310,7 +2310,25 @@ newBuildBtn.addEventListener('click', () => {
   saveState();
 });
 
-loadState();
+function loadBuildFromHash() {
+  const m = location.hash.match(/build=([A-Za-z0-9\-_]+)/);
+  if (!m) return false;
+
+  const payload = decodeBuild(m[1]);
+  if (!payload) return false;
+
+  if (!applyBuild(payload)) return false;
+
+  saveState();
+  history.replaceState(null, '', location.pathname + location.search);
+
+  return true;
+}
+
+
+if (!loadBuildFromHash()) {
+  loadState();
+}
 </script>
 </body>
 </html>
