@@ -1708,7 +1708,6 @@ function showGroup(groupId, color) {
 
   const entry = treeMap[groupId];
   if (entry && entry.viewport) {
-    entry.tree.style.transform = `translate(0px, 0px)`;
     if (entry.viewport._resetDrag) entry.viewport._resetDrag();
   }
 }
@@ -1729,43 +1728,64 @@ returnButton.addEventListener('click', function () {
 
 const sharedBgEl = document.querySelector('.SkillsBackground');
 
+const BG_TILE = 160;
+
 Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
   if (!viewport || !tree) return;
 
   let isDragging = false;
-  let startX, startY;
+  let startX = 0, startY = 0;
   let dragX = 0, dragY = 0;
+  let zoom = 1;
 
-  function computeDragBounds() {
-  const positions = Object.values(nodePositionsByGroup[name] || {});
-  if (positions.length === 0) return { maxX: 0, maxY: 0 };
+  const MIN_ZOOM = 0.4;
+  const MAX_ZOOM = 2.5;
+  const ZOOM_STEP = 0.1;
 
-  const NODE_HALF = 55;
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (const p of positions) {
-    minX = Math.min(minX, p.left - NODE_HALF);
-    maxX = Math.max(maxX, p.left + NODE_HALF);
-    minY = Math.min(minY, p.top  - NODE_HALF);
-    maxY = Math.max(maxY, p.top  + NODE_HALF);
+  function applyTransform() {
+    tree.style.transform = `translate(${dragX}px, ${dragY}px) scale(${zoom})`;
+    if (sharedBgEl) {
+      sharedBgEl.style.backgroundSize = `${BG_TILE * zoom}px`;
+      sharedBgEl.style.backgroundPosition =
+        `calc(50% + ${dragX}px) calc(50% + ${dragY}px)`;
+    }
   }
 
-  const vpRect = viewport.getBoundingClientRect();
-  const halfVpW = vpRect.width  / 2;
-  const halfVpH = vpRect.height / 2;
- const paddingX = -300;
-const paddingY = -150;
+  function computeDragBounds() {
+    const positions = Object.values(nodePositionsByGroup[name] || {});
+    if (positions.length === 0) return { maxX: 0, maxY: 0 };
 
-const maxXBound = Math.max(0,
-  maxX + halfVpW + paddingX,
-  -minX + halfVpW + paddingX
-);
-const maxYBound = Math.max(0,
-  maxY + halfVpH + paddingY,
-  -minY + halfVpH + paddingY
-);
+    const NODE_HALF = 55;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const p of positions) {
+      minX = Math.min(minX, p.left - NODE_HALF);
+      maxX = Math.max(maxX, p.left + NODE_HALF);
+      minY = Math.min(minY, p.top  - NODE_HALF);
+      maxY = Math.max(maxY, p.top  + NODE_HALF);
+    }
 
-  return { maxX: maxXBound, maxY: maxYBound };
-}
+    const vpRect = viewport.getBoundingClientRect();
+    const halfVpW = vpRect.width  / 2;
+    const halfVpH = vpRect.height / 2;
+    const paddingX = -300;
+    const paddingY = -150;
+
+    const sx = maxX * zoom;
+    const sy = maxY * zoom;
+    const nx = -minX * zoom;
+    const ny = -minY * zoom;
+
+    const maxXBound = Math.max(0,
+      sx + halfVpW + paddingX,
+      nx + halfVpW + paddingX
+    );
+    const maxYBound = Math.max(0,
+      sy + halfVpH + paddingY,
+      ny + halfVpH + paddingY
+    );
+
+    return { maxX: maxXBound, maxY: maxYBound };
+  }
 
   viewport.addEventListener('mousedown', (e) => {
     if (e.target.closest('.skill-info-panel')) return;
@@ -1782,10 +1802,7 @@ const maxYBound = Math.max(0,
     const targetY = e.clientY - startY;
     dragX = Math.max(-maxX, Math.min(maxX, targetX));
     dragY = Math.max(-maxY, Math.min(maxY, targetY));
-    tree.style.transform = `translate(${dragX}px, ${dragY}px)`;
-    if (sharedBgEl) {
-      sharedBgEl.style.backgroundPosition = `calc(50% + ${dragX}px) calc(50% + ${dragY}px)`;
-    }
+    applyTransform();
   });
 
   window.addEventListener('mouseup', () => {
@@ -1793,12 +1810,55 @@ const maxYBound = Math.max(0,
     viewport.style.cursor = 'grab';
   });
 
+  viewport.addEventListener('wheel', (e) => {
+    if (document.getElementById(groupId).classList.contains('hidden')) return;
+
+    e.preventDefault();
+
+    const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+    const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom + delta));
+    if (newZoom === zoom) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top  + rect.height / 2;
+    const mx = e.clientX - cx;
+    const my = e.clientY - cy;
+
+    const k = newZoom / zoom;
+    dragX = mx - (mx - dragX) * k;
+    dragY = my - (my - dragY) * k;
+
+    zoom = newZoom;
+
+    const { maxX, maxY } = computeDragBounds();
+    dragX = Math.max(-maxX, Math.min(maxX, dragX));
+    dragY = Math.max(-maxY, Math.min(maxY, dragY));
+
+    applyTransform();
+  }, { passive: false });
+
   viewport._resetDrag = () => {
     dragX = 0;
     dragY = 0;
-    if (sharedBgEl) sharedBgEl.style.backgroundPosition = 'center';
+    zoom = 1;
+    applyTransform();
   };
 });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    viewport.style.cursor = 'grab';
+  });
+
+
+
+viewport._resetDrag = () => {
+  dragX = 0;
+  dragY = 0;
+  zoom = 1;
+  applyTransform();
+};
 
 function collectPrerequisiteChain(groupName, targetId) {
   const groupData = skillsData[groupName];
@@ -2114,6 +2174,48 @@ removeXpBtn.addEventListener('click', () => {
       }
       saveState();
     });
+
+
+
+viewport.addEventListener('wheel', (e) => {
+  if (document.getElementById(groupId).classList.contains('hidden')) return;
+
+  e.preventDefault();
+
+  const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+  const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom + delta));
+  if (newZoom === zoom) return;
+
+  const rect = viewport.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  const mx = e.clientX - cx; 
+  const my = e.clientY - cy;
+
+  const k = newZoom / zoom;
+  dragX = mx - (mx - dragX) * k;
+  dragY = my - (my - dragY) * k;
+
+  zoom = newZoom;
+
+  const { maxX, maxY } = computeDragBounds();
+  dragX = Math.max(-maxX, Math.min(maxX, dragX));
+  dragY = Math.max(-maxY, Math.min(maxY, dragY));
+
+  applyTransform();
+}, { passive: false });
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  const { maxX, maxY } = computeDragBounds();
+  const targetX = e.clientX - startX;
+  const targetY = e.clientY - startY;
+  dragX = Math.max(-maxX, Math.min(maxX, targetX));
+  dragY = Math.max(-maxY, Math.min(maxY, targetY));
+  applyTransform();
+});
+
+
 
 const sidePanelToggle = document.getElementById('sidePanelToggle');
 const sidePanel = document.getElementById('sidePanel');
