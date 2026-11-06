@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Purgatorio Builder v0.1</title>
+  <title>Purgatorio Builder v0.2</title>
   <style>
     body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
     .ui-group.hidden > *, 
@@ -49,23 +49,23 @@
     }
 
     .BottomShade {
-  position: fixed;
-  left: 0;
-  bottom: 0%;
-  width: 100%;
-  height: 20%;                   
-  pointer-events: none;
-  z-index: 6;                      
-  background: linear-gradient(
-    to top,
-    rgb(0, 0, 0) 10%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.25) 60%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.35s ease-out;
-}
+      position: fixed;
+      left: 0;
+      bottom: 0%;
+      width: 100%;
+      height: 20%;                   
+      pointer-events: none;
+      z-index: 6;                      
+      background: linear-gradient(
+        to top,
+        rgb(0, 0, 0) 10%,
+        rgba(0, 0, 0, 0.5) 50%,
+        rgba(0, 0, 0, 0.25) 60%,
+        rgba(0, 0, 0, 0) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.35s ease-out;
+    }
 
     .GradeBar {
       position: fixed;
@@ -163,342 +163,201 @@
     .remove-xp-btn:hover { background-color: #333; }
     .remove-xp-btn:active { transform: translateY(-50%) scale(0.95); }
 
-    body.hud-down .GradeBar {
-     top: 93%;        
+    body.hud-down .GradeBar { top: 93%; }
+    body.hud-down .GradeNum { top: 97%; }
+    body.hud-down .add-xp-btn { top: 93%; }
+    body.hud-down .remove-xp-btn { top: 93%; }
+    body.hud-down .BottomShade { opacity: 1; }
+
+    .side-panel {
+      position: fixed;
+      top: 6%;
+      left: 100%;
+      right: auto;
+      width: 700px;
+      height: 90%;
+      max-width: 90vw;
+      max-height: 850px;
+      transform: translateX(0);
+      background: #1c1c1c;
+      border: 1px solid #3e3b2b;
+      border-radius: 12px;
+      z-index: 299;
+      box-sizing: border-box;
+      color: #a09a86;
+      font-family: monospace;
+      overflow: visible;              
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.45s cubic-bezier(.2,.8,.2,1), border-radius 0.45s, border 0.45s, background-color 0.2s;
+      pointer-events: auto;
     }
 
-    body.hud-down .GradeNum {
-      top: 97%;         
+    .new-build-btn {
+      position: absolute;
+      top: 22px;
+      right: 20px;
+      padding: 5px 12px;
+      background: #1c1c1c;
+      border: 1px solid #593e27;
+      border-radius: 6px;
+      color: #b89e53;
+      font-family: monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .new-build-btn:hover { background: #2a2a2a; color: #fff; border-color: #b89e53; }
+    .new-build-btn:active { transform: scale(0.96); }
+
+    .share-build-btn {
+      position: absolute;
+      top: 56px;            
+      right: 20px;
+      padding: 5px 12px;
+      background: #1c1c1c;
+      border: 1px solid #593e27;
+      border-radius: 6px;
+      color: #b89e53;
+      font-family: monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .share-build-btn:hover { background: #2a2a2a; color: #fff; border-color: #b89e53; }
+    .share-build-btn:active { transform: scale(0.96); }
+    .share-build-btn.copied { color: #35ff61; border-color: #35ff61; }
+
+    body.side-panel-open .side-panel { left: 50%; transform: translateX(-50%); }
+
+    .side-panel-body {
+      padding: 10px 25px 25px 25px;
+      overflow-y: auto;
+      flex-grow: 1;
+      font-size: 15px;
     }
 
-    body.hud-down .add-xp-btn {
-      top: 93%;
+    .side-panel-toggle {
+      position: absolute;
+      width: 34px;
+      height: 90px;
+      top: 45%;
+      right: 100%;
+      background: #1c1c1c;
+      border: 1px solid #555;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      color: #fff;
+      font-size: 20px;
+      font-family: monospace;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      pointer-events: auto;
+      transition: border-radius 0.45s, border 0.45s, background-color 0.2s;
+    }
+    .side-panel-toggle:hover { background: #333; }
+    body.side-panel-open .side-panel-toggle { right: 100%; }
+
+    .side-panel-header {
+      display: flex;
+      justify-content: center;
+      padding: 25px 20px 15px 20px;
+      flex-shrink: 0;
+    }
+    .side-panel-header span {
+      font-size: 18px;
+      font-family: 'Georgia', serif;
+      color: #b89e53;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #b89e53;
+      padding-bottom: 2px;
     }
 
-    body.hud-down .remove-xp-btn {
-     top: 93%;
+    .side-panel-body::-webkit-scrollbar { width: 6px; }
+    .side-panel-body::-webkit-scrollbar-track { background: transparent; }
+    .side-panel-body::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .CharacterStatsContainer {
+      position: absolute;
+      bottom: 0.7%;
+      left: 8%;
+      height: 90%;
+      width: 43%;
+      border: 10px solid transparent;
+      border-radius: 15px;
     }
 
-    body.hud-down .BottomShade {
-     opacity: 1;
+    .StatsBG {
+      position:absolute;
+      right: 2%;
+      top: -1%;
+      height: 100%;
+      width: 100%;
+      z-index: -1;
+      border: 10px solid #121204;
+      border-radius: 15px;
+      background: #121204;
+      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 20%, transparent 100%);
+      mask-image: linear-gradient(to right, #000 0%, #000 20%, transparent 100%);
     }
 
-.side-panel {
-  position: fixed;
-  top: 6%;
-  left: 100%;
-  right: auto;
-  width: 700px;
-  height: 90%;
-  max-width: 90vw;
-  max-height: 850px;
-  transform: translateX(0);
-  background: #1c1c1c;
-  border: 1px solid #3e3b2b;
-  border-radius: 12px;
-  z-index: 299;
-  box-sizing: border-box;
-  color: #a09a86;
-  font-family: monospace;
-  overflow: visible;              
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  display: flex;
-  flex-direction: column;
-  transition:
-  transform 0.45s cubic-bezier(.2,.8,.2,1),
-    border-radius 0.45s,
-    border 0.45s,
-    background-color 0.2s;
+    .TextLabel {
+      position: absolute;
+      bottom: 100%;
+      right: 60%;
+      height: 4%;
+      width: 65%;
+      border-radius: 15px;
+      background-color: #121204;
+      color: #c7872e;  
+      font-family: 'Courier New', Courier, monospace; 
+      font-size: 15px;
+      text-align: center;
+    }
 
+    .stat-block { margin-bottom: 25px; }
+    .stat-title {
+      color: #c7872e;
+      font-size: 15px;
+      border-bottom: 1px solid #3e3b2b;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+      font-family: monospace;
+    }
+    .stat-main-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .stat-icon { width: 45px; height: 45px; }
+    .stat-value { font-size: 32px; color: #c7872e; font-family: monospace; }
+    .stat-reduction { font-size: 12px; opacity: 0; color: #c7872e; margin-left: auto; }
+    .stat-details { font-size: 14px; line-height: 1.6; color: #5a4c2c; }
+    .stat-details span { color: #5a4c2c; }
 
-  pointer-events: auto;
+    .stat-split-row { display: flex; justify-content: space-between; margin-top: 30px; gap: 20px; }
+    .stat-split-col { flex: 1; display: flex; flex-direction: column; }
+    .stat-split-col .stat-value { font-size: 24px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .stat-split-col .stat-icon-small { width: 25px; height: 25px; }
+    .stat-sub-text { font-size: 12px; color: #5c5c52; line-height: 1.5; }
 
-
-}
-
-.new-build-btn {
-  position: absolute;
-  top: 22px;
-  right: 20px;
-  padding: 5px 12px;
-  background: #1c1c1c;
-  border: 1px solid #593e27;
-  border-radius: 6px;
-  color: #b89e53;
-  font-family: monospace;
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.new-build-btn:hover {
-  background: #2a2a2a;
-  color: #fff;
-  border-color: #b89e53;
-}
-
-.new-build-btn:active {
-  transform: scale(0.96);
-}
-
-.share-build-btn {
-  position: absolute;
-  top: 56px;            
-  right: 20px;
-  padding: 5px 12px;
-  background: #1c1c1c;
-  border: 1px solid #593e27;
-  border-radius: 6px;
-  color: #b89e53;
-  font-family: monospace;
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.share-build-btn:hover {
-  background: #2a2a2a;
-  color: #fff;
-  border-color: #b89e53;
-}
-
-.share-build-btn:active {
-  transform: scale(0.96);
-}
-
-.share-build-btn.copied {
-  color: #35ff61;
-  border-color: #35ff61;
-}
-
-body.side-panel-open .side-panel {
-    left: 50%;
-  transform: translateX(-50%);
-}
-
-.side-panel-body {
-  padding: 10px 25px 25px 25px;
-  overflow-y: auto;
-  flex-grow: 1;
-  font-size: 15px;
-}
-
-.side-panel-toggle {
-  position: absolute;
-  width: 34px;
-  height: 90px;
-  top: 45%;
-  right: 100%;
-  background: #1c1c1c;
-  border: 1px solid #555;
-  border-right: none;
-  border-radius: 8px 0 0 8px;
-  color: #fff;
-  font-size: 20px;
-  font-family: monospace;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  pointer-events: auto;
-  transition:
-
-    border-radius 0.45s,
-    border 0.45s,
-    background-color 0.2s;
-}
-
-.side-panel-toggle:hover {
-  background: #333;
-}
-
-body.side-panel-open .side-panel-toggle {
-    right: 100%;
-}
-
-
-
-.side-panel-header {
-  display: flex;
-  justify-content: center;
-  padding: 25px 20px 15px 20px;
-  flex-shrink: 0;
-}
-
-.side-panel-header span {
-  font-size: 18px;
-  font-family: 'Georgia', serif;
-  color: #b89e53;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border-bottom: 1px solid #b89e53;
-  padding-bottom: 2px;
-}
-
-
-.side-panel-body {
-  padding: 10px 25px 25px 25px;
-  overflow-y: auto;
-  flex-grow: 1;
-  font-size: 15px;
-}
-
-
-.side-panel-body::-webkit-scrollbar { width: 6px; }
-.side-panel-body::-webkit-scrollbar-track { background: transparent; }
-.side-panel-body::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-
-.CharacterStatsContainer {
-  position: absolute;
-  bottom: 0.7%;
-  left: 8%;
-  height: 90%;
-  width: 43%;
-
-  border: 10px solid transparent;
-  border-radius: 15px;
-}
-
-
-.StatsBG {
-  position:absolute;
-  right: 2%;
-  top: -1%;
-  height: 100%;
-  width: 100%;
-  z-index: -1;
-  border: 10px solid #121204;
-  border-radius: 15px;
-  background: #121204;
-
-  -webkit-mask-image: linear-gradient(
-    to right,
-    #000 0%,
-    #000 20%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    #000 0%,
-    #000 20%,
-    transparent 100%
-  );
-}
-
-.TextLabel {
-  position: absolute;
-  bottom: 100%;
-  right: 60%;
-  height: 4%;
-  width: 65%;
-  border-radius: 15px;
-  background-color: #121204;
-  color: #c7872e;  
-    font-family: 'Courier New', Courier, monospace; 
-  font-size: 15px;
-  text-align: center;
-}
-
-.stat-block {
-  margin-bottom: 25px;
-}
-
-.stat-title {
-  color: #c7872e;
-  font-size: 15px;
-  border-bottom: 1px solid #3e3b2b;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-  font-family: monospace;
-}
-
-.stat-main-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.stat-icon {
-  width: 45px;
-  height: 45px;
-}
-
-.stat-value {
-  font-size: 32px;
-  color: #c7872e;
-  font-family: monospace;
-}
-
-.stat-reduction {
-  font-size: 12px;
-  opacity: 0;
-  color: #c7872e;
-  margin-left: auto;
-}
-
-.stat-details {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #5a4c2c;
-}
-
-.stat-details span {
-  color: #5a4c2c;
-}
-
-
-.stat-split-row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
-  gap: 20px;
-}
-
-.stat-split-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-split-col .stat-value {
-  font-size: 24px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.stat-split-col .stat-icon-small {
-  width: 25px;
-  height: 25px;
-}
-
-.stat-sub-text {
-  font-size: 12px;
-  color: #5c5c52;
-  line-height: 1.5;
-}
-
-
-
-   .TotalTier {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 22px;
-  color: var(--category-color, #fff);
-  z-index: 2;
-  pointer-events: none;
-  font-family: monospace;
-}
+    .TotalTier {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22px;
+      color: var(--category-color, #fff);
+      z-index: 2;
+      pointer-events: none;
+      font-family: monospace;
+    }
 
     .skill-point-display {
       position: fixed;
@@ -575,55 +434,28 @@ body.side-panel-open .side-panel-toggle {
       transform: translateX(-50%);
     }
 
-.CategoryTier .tier-count {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 5px;
-  background: #1c1c1c;
-  border: 1px solid #b89e53;
-  border-radius: 11px;
-  color: #fff;
-  font-size: 12px;
-  font-family: monospace;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  pointer-events: none;
-  z-index: 5;
-}
-
     .CategoryTier.tier-instincts  { background-image: url('TierInstinctsFull.png'); }
     .CategoryTier.tier-fortitude  { background-image: url('TierFortitudeFull.png'); }
     .CategoryTier.tier-prudence   { background-image: url('TierPrudenceFull.png'); }
     .CategoryTier.tier-temperance { background-image: url('TierTemperanceFull.png'); }
     .CategoryTier.tier-haste      { background-image: url('TierHasteFull.png'); }
 
-    .button-column {
-  position: relative;
-}
+    .button-column { position: relative; }
 
-.button-column::before {
-  content: "";
-  position: absolute;
-  top: 30%;
-  left: 67%;
-  transform: translate(-50%, -50%);
-  
-  width: 330px;
-  height: 950%;
-
-background: radial-gradient(ellipse at center, rgba(90, 90, 90, 0.3) 0%, rgba(42, 42, 42, 0.1) 40%, transparent 50%);
-
-border-radius: 30%;
-  z-index: 0; 
-  pointer-events: none; 
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
+    .button-column::before {
+      content: "";
+      position: absolute;
+      top: 30%;
+      left: 67%;
+      transform: translate(-50%, -50%);
+      width: 330px;
+      height: 950%;
+      background: radial-gradient(ellipse at center, rgba(90, 90, 90, 0.3) 0%, rgba(42, 42, 42, 0.1) 40%, transparent 50%);
+      border-radius: 30%;
+      z-index: 0; 
+      pointer-events: none; 
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
 
     .button-column > button {
       position: relative;
@@ -647,51 +479,38 @@ border-radius: 30%;
       transition: transform 0.2s ease-out;
     }
 
-    .button-column > button:hover img {
-      transform: translate(-50%, -50%) scale(1.125);
-    }
-
+    .button-column > button:hover img { transform: translate(-50%, -50%) scale(1.125); }
     
     .category-tooltip {
-  position: absolute;
-  top: -45px;
-  left: 72.5%;
-  transform: translateX(-50%);
-  width: 390px;
-  font-family: 'Segoe UI', 'Inter', monospace;
-  text-align: center;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 500;
-  display: flex;
-  flex-direction: column;
-  background: none;
+      position: absolute;
+      top: -45px;
+      left: 72.5%;
+      transform: translateX(-50%);
+      width: 390px;
+      font-family: 'Segoe UI', 'Inter', monospace;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      background: none;
+      --accent: currentColor;
+      --name-color: currentColor;
+    }
 
-  --accent: currentColor;
-  --name-color: currentColor;
-}
+    .button-column:hover .category-tooltip { opacity: 1; visibility: visible; }
 
-.button-column:hover .category-tooltip {
-  opacity: 1;
-  visibility: visible;
-}
-
-.Glow {
-  width: 200px;
-  height: 200px;
-}
-
-.category-tooltip .tt-name {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 6px;
-  font-family: 'Inconsolata', 'Consolas', 'Monaco', 'Courier New', monospace;
-  text-transform: uppercase;
-  margin-bottom: 215px;
-
-  color: var(--name-color);             
-  text-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);  
-}
+    .category-tooltip .tt-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      font-family: 'Inconsolata', 'Consolas', 'Monaco', 'Courier New', monospace;
+      text-transform: uppercase;
+      margin-bottom: 215px;
+      color: var(--name-color);             
+      text-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);  
+    }
 
     .category-tooltip .tt-short {
       font-size: 16px;
@@ -710,7 +529,6 @@ border-radius: 30%;
       font-family:  monospace;
       letter-spacing: 0.3px;
     }
-
 
     .SkillsBackground {
       position: absolute;
@@ -757,10 +575,7 @@ border-radius: 30%;
       cursor: grab;
       user-select: none; 
     }
-
-    .viewport:active {
-      cursor: grabbing;
-    }
+    .viewport:active { cursor: grabbing; }
 
     .tree-container {
       position: absolute;
@@ -794,15 +609,8 @@ border-radius: 30%;
       transition: transform 0.2s ease-out, filter 0.2s;
     }
 
-    .SkillNodeWrapper:hover,
-    .SkillNodeWrapper.selected {
-      z-index: 50;
-    }
-
-    .SkillNodeWrapper:hover .BaseSkill,
-    .SkillNodeWrapper.selected .BaseSkill {
-      transform: scale(1.15);
-    }
+    .SkillNodeWrapper:hover, .SkillNodeWrapper.selected { z-index: 50; }
+    .SkillNodeWrapper:hover .BaseSkill, .SkillNodeWrapper.selected .BaseSkill { transform: scale(1.15); }
 
     .SkillNodeWrapper::before {
       content: attr(data-name);
@@ -823,38 +631,28 @@ border-radius: 30%;
       z-index: 100;
     }
 
-    .SkillNodeWrapper:hover::before,
-    .SkillNodeWrapper.selected::before {
-      opacity: 1;
-    }
-
+    .SkillNodeWrapper:hover::before, .SkillNodeWrapper.selected::before { opacity: 1; }
    
-.node-romb {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background-color: var(--category-color, #ff0000); 
-  transform: translate(-50%, -50%) rotate(45deg);
-  z-index: 3;
-  pointer-events: none;
-}
-.node-romb.bottom { 
-  left: 84%; 
-  top: 164%; 
-}
-.node-romb.top { 
-  left: 84%; 
-  top: 17%; 
-}
+    .node-romb {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background-color: var(--category-color, #ff0000); 
+      transform: translate(-50%, -50%) rotate(45deg);
+      z-index: 3;
+      pointer-events: none;
+    }
+    .node-romb.bottom { left: 84%; top: 164%; }
+    .node-romb.top { left: 84%; top: 17%; }
 
-.romb-link {
-  position: absolute;
-  background-color: var(--category-color, #ff0000);
-  height: 3px;
-  transform-origin: 0 0;
-  z-index: 2;
-  pointer-events: none;
-}
+    .romb-link {
+      position: absolute;
+      background-color: var(--category-color, #ff0000);
+      height: 3px;
+      transform-origin: 0 0;
+      z-index: 2;
+      pointer-events: none;
+    }
 
     .skill-info-panel {
       position: fixed;
@@ -878,362 +676,474 @@ border-radius: 30%;
       box-sizing: border-box;
       overflow: hidden;
     }
-
-    .skill-info-panel.visible {
-      display: flex;
-    }
+    .skill-info-panel.visible { display: flex; }
 
     .info-type {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  margin-bottom: 8px;
-  background-color: white;
-  color: black;
-  padding: 4px 15px;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: bold;
-  white-space: nowrap;
-}
-    .info-title {
-  font-size: 25px;
-  font-weight: bold;
-  margin: 0 0 5px 0;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.info-subtitle {
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 20px;
-  flex-shrink: 0;
-}
-
-    .info-desc {
-  font-size: 18px;
-  line-height: 1.5;
-  margin-bottom: 20px;
-  flex-grow: 1;
-  overflow-y: auto;         
-  min-height: 0;           
-}
-
-    .info-missing {
-      color: #ff3333;
-      font-size: 14px;
-      text-align: center;
-      text-transform: uppercase;
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      margin-bottom: 8px;
+      background-color: white;
+      color: black;
+      padding: 4px 15px;
+      border-radius: 4px;
+      font-size: 16px;
       font-weight: bold;
-      margin-top: auto; 
-      padding-bottom: 10px;
+      white-space: nowrap;
+    }
+    .info-title { font-size: 25px; font-weight: bold; margin: 0 0 5px 0; color: #fff; flex-shrink: 0; }
+    .info-subtitle { font-size: 14px; color: #888; margin-bottom: 20px; flex-shrink: 0; }
+    .info-desc { font-size: 18px; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; overflow-y: auto; min-height: 0; }
+    .info-missing { color: #ff3333; font-size: 14px; text-align: center; text-transform: uppercase; font-weight: bold; margin-top: auto; padding-bottom: 10px; }
 
+    .info-unlock-button {
+      width: 100%;            
+      max-width: 200px;
+      height: 36px;
+      background-color: transparent;
+      border: 1px solid #ffffff;
+      border-radius: 6px;
+      color: #ffffff;
+      font-family: monospace;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      align-self: center;        
+      flex-shrink: 0;
     }
 
-.info-unlock-button {
-  width: 100%;            
-  max-width: 200px;
-  height: 36px;
-  background-color: transparent;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  color: #ffffff;
-  font-family: monospace;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  align-self: center;        
-  flex-shrink: 0;
-}
+    .info-cost-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 32px;
+      font-family: monospace;
+      color: #fff;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
 
-.info-cost-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 32px;
-  font-family: monospace;
-  color: #fff;
-  margin-bottom: 12px;
-  flex-shrink: 0;
-}
+    .info-cost-icon {
+      width: 32px;
+      height: 32px;
+      background-image: url('SkillPoint.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
+    }
 
-.info-cost-icon {
-  width: 32px;
-  height: 32px;
-  background-image: url('SkillPoint.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-shrink: 0;
-}
+    .origin-container {
+      position: absolute;
+      bottom: 80%;
+      left: 55%;
+      width: 43%;
+      z-index: 10;
+      font-family: monospace;
+    }
+    .origin-label {
+      color: #c7872e;
+      font-size: 15px;
+      margin-bottom: 5px;
+      display: block;
+    }
+    
+    .custom-select {
+      position: relative;
+      width: 100%;
+    }
+    
+    .select-trigger {
+      width: 100%;
+      padding: 8px;
+      background-color: #1c1c1c;
+      color: #a09a86;
+      border: 2px solid #433120;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 14px;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .select-trigger:hover {
+      border-color: #c7872e;
+    }
+    
+    .select-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: max-content;
+      min-width: 100%;
+      background-color: #1c1c1c;
+      border: 2px solid #433120;
+      border-radius: 6px;
+      margin-top: 5px;
+      display: none;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    }
+    .select-options.open {
+      display: flex; 
+    }
+    
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      width: 100%; 
+      min-width: 200px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .select-option {
+      padding: 12px;
+      color: #c7872e;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+      border-bottom: 1px solid transparent;
+      transition: background-color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .select-option:hover {
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+    .select-option:last-child {
+      border-bottom: none;
+    }
+
+    .origin-tooltip {
+      display: none;
+      width: 250px;
+      background-color: #121204;
+      border-left: 2px solid #433120;
+      padding: 15px;
+      color: #a09a86;
+      font-size: 13px;
+      line-height: 1.4;
+      box-sizing: border-box;
+      flex-direction: column;
+      gap: 8px;
+      white-space: normal;
+    }
+    .origin-tooltip.active {
+      display: flex;
+    }
+    .tooltip-bonus {
+      border-bottom: 1px dashed #3e3b2b;
+      padding-bottom: 5px;
+    }
+    .tooltip-bonus:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
 
 <div class="HiddenERLKING"></div>
 
-
-  
 <div class="side-panel" id="sidePanel">
- 
   <div class="side-panel-header">
     <span>Character Info</span>
-      <button class="new-build-btn" id="newBuildBtn" title="Reset everything to zero">New Build</button>
-        <button class="share-build-btn" id="shareBuildBtn" title="Copy a shareable link to this build">Share Build</button>
+    <button class="new-build-btn" id="newBuildBtn" title="Reset everything to zero">New Build</button>
+    <button class="share-build-btn" id="shareBuildBtn" title="Copy a shareable link to this build">Share Build</button>
   </div>
   <div class="side-panel-body">
     
- <button class="side-panel-toggle" id="sidePanelToggle" aria-label="Toggle Character Info">&lt;</button>
+    <button class="side-panel-toggle" id="sidePanelToggle" aria-label="Toggle Character Info">&lt;</button>
 
- <div class="CharacterStatsContainer">
-  <div class="TextLabel">CHARACTER STATS</div>
-
-  <div class="StatsBG"></div>
-    <!-- Max Health -->
-    <div class="stat-block">
-      <div class="stat-title">Max Health</div>
-      <div class="stat-main-row">
-        <img src="HealthIcon.png" class="stat-icon" alt="Health">
-        <div class="stat-value" id="sideHealth">120</div>
-      </div>
-      <div class="stat-details">
-        <div>Base Health: <span>150</span></div>
-        <div>Additional Multiplier: <span>0%</span></div>
+    <div class="origin-container">
+      <label class="origin-label">Origin</label>
+      <div class="custom-select" id="customSelect">
+        <div class="select-trigger" id="selectTrigger">
+          <span id="selectedOriginText">Backstreets</span>
+          <span>▼</span>
+        </div>
+        <div class="select-options" id="selectOptions">
+          <div class="options-list" id="optionsList">
+          </div>
+          <div class="origin-tooltip" id="originTooltip">
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Max Stagger -->
-    <div class="stat-block">
-      <div class="stat-title">Max Stagger</div>
-      <div class="stat-main-row">
-        <img src="StaggerIcon.png" class="stat-icon" alt="Stagger">
-        <div class="stat-value" id="sideStagger">100</div>
-      </div>
-      <div class="stat-details">
-        <div>Base Stagger: <span>100</span></div>
-        <div>Additional Multiplier: <span>0%</span></div>
-      </div>
-    </div>
+    <div class="CharacterStatsContainer">
+      <div class="TextLabel">CHARACTER STATS</div>
+      <div class="StatsBG"></div>
 
-    <!-- Defense -->
-    <div class="stat-block">
-      <div class="stat-title">Defense</div>
-      <div class="stat-main-row">
-        <img src="DefenseIcon.png" class="stat-icon" alt="Defense">
-        <div class="stat-value" id="sideDefense">80</div>
-        <div class="stat-reduction">3.01% reduction of base damage</div>
-      </div>
-      <div class="stat-details">
-        <div>Base Defense: <span>0</span></div>
-        <div>Additional Multiplier: <span>0%</span></div>
-      </div>
-    </div>
-
-        <!-- Bottom Split (Speed & Damage) -->
-    <div class="stat-split-row">
-      
-      <!-- Speed -->
-      <div class="stat-split-col">
-        <div class="stat-title" style="border:none; margin-bottom:5px;">Speed</div>
-        <div class="stat-value">
-          <img src="SpeedIcon.png" class="stat-icon-small" alt="Speed">
-          14
+      <!-- Max Health -->
+      <div class="stat-block">
+        <div class="stat-title">Max Health</div>
+        <div class="stat-main-row">
+          <img src="HealthIcon.png" class="stat-icon" alt="Health">
+          <div class="stat-value" id="sideHealth">150</div>
+        </div>
+        <div class="stat-details">
+          <div>Base Health: <span>150</span></div>
+          <div>Additional Multiplier: <span id="healthMultDisplay">0%</span></div>
         </div>
       </div>
 
-      <!-- Damage -->
-      <div class="stat-split-col">
-        <div class="stat-title" style="border:none; margin-bottom:5px;">Damage</div>
-        <div class="stat-sub-text">
-          Added Base Damage: <span style="color:#b89e53;">0</span><br>
-          Additional Multiplier From Augments: 0%
+      <!-- Max Stagger -->
+      <div class="stat-block">
+        <div class="stat-title">Max Stagger</div>
+        <div class="stat-main-row">
+          <img src="StaggerIcon.png" class="stat-icon" alt="Stagger">
+          <div class="stat-value" id="sideStagger">100</div>
+        </div>
+        <div class="stat-details">
+          <div>Base Stagger: <span>100</span></div>
+          <div>Additional Multiplier: <span id="staggerMultDisplay">0%</span></div>
         </div>
       </div>
 
-    </div> 
-</div>
+      <!-- Defense -->
+      <div class="stat-block">
+        <div class="stat-title">Defense</div>
+        <div class="stat-main-row">
+          <img src="DefenseIcon.png" class="stat-icon" alt="Defense">
+          <div class="stat-value" id="sideDefense">80</div>
+          <div class="stat-reduction">3.01% reduction of base damage</div>
+        </div>
+        <div class="stat-details">
+          <div>Base Defense: <span>0</span></div>
+          <div>Additional Multiplier: <span id="defenseMultDisplay">0%</span></div>
+        </div>
+      </div>
+
+      <div class="stat-split-row">
+        <div class="stat-split-col">
+          <div class="stat-title" style="border:none; margin-bottom:5px;">Speed</div>
+          <div class="stat-value">
+            <img src="SpeedIcon.png" class="stat-icon-small" alt="Speed">
+            14
+          </div>
+        </div>
+        <div class="stat-split-col">
+          <div class="stat-title" style="border:none; margin-bottom:5px;">Damage</div>
+          <div class="stat-sub-text">
+            Added Base Damage: <span style="color:#b89e53;">0</span><br>
+            Additional Multiplier From Augments: <span id="damageMultDisplay">0%</span>
+          </div>
+        </div>
+      </div> 
+    </div>
   </div> 
 </div> 
 
-
-
 <div class="GradeBar">
-    <div class="fill" id="gradeBarFill"></div>
-    <div class="divider" style="left: calc(33.33% - 1.5px);"></div>
-    <div class="divider" style="left: calc(66.66% - 1.5px);"></div>
-  </div>
-  <div class="GradeNum" id="gradeDisplay">Grade 9</div>
+  <div class="fill" id="gradeBarFill"></div>
+  <div class="divider" style="left: calc(33.33% - 1.5px);"></div>
+  <div class="divider" style="left: calc(66.66% - 1.5px);"></div>
+</div>
+<div class="GradeNum" id="gradeDisplay">Grade 9</div>
 
-  <button class="remove-xp-btn" id="removeXpBtn">-</button>
-  <button class="add-xp-btn" id="addXpBtn">+</button>
-  <div class="skill-point-display" id="skillPointDisplay">0</div>
-  <div class="SkillPointIcon" id="SkillPointIcon"></div>
-  <div class="SkillPointsText" id="SkillPointsText">Skill Points</div>
+<button class="remove-xp-btn" id="removeXpBtn">-</button>
+<button class="add-xp-btn" id="addXpBtn">+</button>
+<div class="skill-point-display" id="skillPointDisplay">0</div>
+<div class="SkillPointIcon" id="SkillPointIcon"></div>
+<div class="SkillPointsText" id="SkillPointsText">Skill Points</div>
 
-  <div class="BottomShade" id="BottomShade"></div>
+<div class="BottomShade" id="BottomShade"></div>
 
-  <div class="ui-group" id="uiGroup">
-    <div class="Background"></div>
-    <div class="Version">Purgatorio Builder v0.1</div>
-    <div class="Frame">FOR PURGATORIO DEMO 2</div>
+<div class="ui-group" id="uiGroup">
+  <div class="Background"></div>
+  <div class="Version">Purgatorio Builder v0.2</div>
+  <div class="Frame">FOR PURGATORIO DEMO 2</div>
 
-    <div class="button-row">
-      <!-- INSTINCTS -->
-      <div class="button-column" style="--category-color: #a10808;">
-        <button data-group="InstinctsGroup" data-color="#a70000"> <img src="Instincts.png" alt="Instincts"></button>
-        <div class="CategoryTier tier-instincts"> <div class="TotalTier" id="TotalTier-Instincts">0</div> </div>
-        <div class="category-tooltip" style="color: #a70000;">
-          <div class="tt-name">INSTINCTS</div>
-          <div class="tt-short">Raw power and force.</div>
-          <div class="tt-desc">Increase Damage both directly and through Bleed, Stagger Damage, and Tremor.</div>
-        </div>
+  <div class="button-row">
+    <div class="button-column" style="--category-color: #a10808;">
+      <button data-group="InstinctsGroup" data-color="#a70000"> <img src="Instincts.png" alt="Instincts"></button>
+      <div class="CategoryTier tier-instincts"> <div class="TotalTier" id="TotalTier-Instincts">0</div> </div>
+      <div class="category-tooltip" style="color: #a70000;">
+        <div class="tt-name">INSTINCTS</div>
+        <div class="tt-short">Raw power and force.</div>
+        <div class="tt-desc">Increase Damage both directly and through Bleed, Stagger Damage, and Tremor.</div>
       </div>
-      <!-- FORTITUDE -->
-      <div class="button-column" style="--category-color: #138036;">
-        <button data-group="FortitudeGroup" data-color="#35ff61"> <img src="Fortitude.png" alt="Fortitude"></button>
-        <div class="CategoryTier tier-fortitude"> <div class="TotalTier" id="TotalTier-Fortitude">0</div> </div>
-        <div class="category-tooltip" style="color: #10bc47;">
-          <div class="tt-name">FORTITUDE</div>
-          <div class="tt-short">Physical endurance.</div>
-          <div class="tt-desc">Increase survivability through Health, Stagger Resistance, and Protection related perks.</div>
-        </div>
+    </div>
+    <div class="button-column" style="--category-color: #138036;">
+      <button data-group="FortitudeGroup" data-color="#35ff61"> <img src="Fortitude.png" alt="Fortitude"></button>
+      <div class="CategoryTier tier-fortitude"> <div class="TotalTier" id="TotalTier-Fortitude">0</div> </div>
+      <div class="category-tooltip" style="color: #10bc47;">
+        <div class="tt-name">FORTITUDE</div>
+        <div class="tt-short">Physical endurance.</div>
+        <div class="tt-desc">Increase survivability through Health, Stagger Resistance, and Protection related perks.</div>
       </div>
-      <!-- PRUDENCE -->
-      <div class="button-column" style="--category-color: #a6a6a6;">
-        <button data-group="PrudenceGroup" data-color="#ffffff"> <img src="Prudence.png" alt="Prudence"></button>
-        <div class="CategoryTier tier-prudence"> <div class="TotalTier" id="TotalTier-Prudence">0</div> </div>
-        <div class="category-tooltip" style="color:#b2b2b2; --accent:#b2b2b2; --name-color:#ffffff;">        
-          <div class="tt-name">PRUDENCE</div>
-          <div class="tt-short">Willpower and reasoning.</div>
-          <div class="tt-desc">Increase Sanity or use it as a resource to bolster E.G.O, Sinking, and manipulate cooldowns.</div>
-        </div>
+    </div>
+    <div class="button-column" style="--category-color: #a6a6a6;">
+      <button data-group="PrudenceGroup" data-color="#ffffff"> <img src="Prudence.png" alt="Prudence"></button>
+      <div class="CategoryTier tier-prudence"> <div class="TotalTier" id="TotalTier-Prudence">0</div> </div>
+      <div class="category-tooltip" style="color:#b2b2b2; --accent:#b2b2b2; --name-color:#ffffff;">        
+        <div class="tt-name">PRUDENCE</div>
+        <div class="tt-short">Willpower and reasoning.</div>
+        <div class="tt-desc">Increase Sanity or use it as a resource to bolster E.G.O, Sinking, and manipulate cooldowns.</div>
       </div>
-      <!-- TEMPERANCE -->
-      <div class="button-column" style="--category-color: #5d2368;">
-        <button data-group="TemperanceGroup" data-color="#ae3cff"> <img src="Temperance.png" alt="Temperance"></button>
-        <div class="CategoryTier tier-temperance"> <div class="TotalTier" id="TotalTier-Temperance">0</div> </div>
-        <div class="category-tooltip" style="color: #7f2991;">
-          <div class="tt-name">TEMPERANCE</div>
-          <div class="tt-short">Discipline and control.</div>
-          <div class="tt-desc">Unlock versatile abilities that specialize in buffing and debuffing whilst bolstering Rupture and Burn.</div>
-        </div>
+    </div>
+    <div class="button-column" style="--category-color: #5d2368;">
+      <button data-group="TemperanceGroup" data-color="#ae3cff"> <img src="Temperance.png" alt="Temperance"></button>
+      <div class="CategoryTier tier-temperance"> <div class="TotalTier" id="TotalTier-Temperance">0</div> </div>
+      <div class="category-tooltip" style="color: #7f2991;">
+        <div class="tt-name">TEMPERANCE</div>
+        <div class="tt-short">Discipline and control.</div>
+        <div class="tt-desc">Unlock versatile abilities that specialize in buffing and debuffing whilst bolstering Rupture and Burn.</div>
       </div>
-      <!-- HASTE -->
-      <div class="button-column" style="--category-color: #a89b57;">
-        <button data-group="SpeedGroup" data-color="#fcff33"> <img src="Haste.png" alt="Haste"></button>
-        <div class="CategoryTier tier-haste"> <div class="TotalTier" id="TotalTier-Haste">0</div> </div>
-        <div class="category-tooltip" style="color: #fde77b;">
-          <div class="tt-name">SPEED</div>
-          <div class="tt-short">Fleet footwork and reflexes.</div>
-          <div class="tt-desc">Unlock perks that rewards perfect dodging as well bolstering Haste, Poise, and Charge.</div>
-        </div>
+    </div>
+    <div class="button-column" style="--category-color: #a89b57;">
+      <button data-group="SpeedGroup" data-color="#fcff33"> <img src="Haste.png" alt="Haste"></button>
+      <div class="CategoryTier tier-haste"> <div class="TotalTier" id="TotalTier-Haste">0</div> </div>
+      <div class="category-tooltip" style="color: #fde77b;">
+        <div class="tt-name">SPEED</div>
+        <div class="tt-short">Fleet footwork and reflexes.</div>
+        <div class="tt-desc">Unlock perks that rewards perfect dodging as well bolstering Haste, Poise, and Charge.</div>
       </div>
-    </div> 
-  </div>
-
-
-
-
-  <div class="skill-group hidden" id="SkillsBgGroup">
-    <div class="SkillsBackground"></div>
-  </div>
-
-  <div class="skill-group hidden" id="InstinctsGroup">
-    <div class="viewport" id="dragViewport">
-      <div class="tree-container" id="dragTree"></div>
     </div>
+  </div> 
+</div>
+
+<div class="skill-group hidden" id="SkillsBgGroup">
+  <div class="SkillsBackground"></div>
+</div>
+
+<div class="skill-group hidden" id="InstinctsGroup">
+  <div class="viewport" id="dragViewport">
+    <div class="tree-container" id="dragTree"></div>
   </div>
+</div>
 
-  <div class="skill-group hidden" id="FortitudeGroup">
-    <div class="viewport" id="dragViewportFortitude">
-      <div class="tree-container" id="dragTreeFortitude"></div>
-    </div>
+<div class="skill-group hidden" id="FortitudeGroup">
+  <div class="viewport" id="dragViewportFortitude">
+    <div class="tree-container" id="dragTreeFortitude"></div>
   </div>
+</div>
 
-  <div class="skill-group hidden" id="PrudenceGroup">
-    <div class="viewport" id="dragViewportPrudence">
-      <div class="tree-container" id="dragTreePrudence"></div>
-    </div>
+<div class="skill-group hidden" id="PrudenceGroup">
+  <div class="viewport" id="dragViewportPrudence">
+    <div class="tree-container" id="dragTreePrudence"></div>
   </div>
+</div>
 
-  <div class="skill-group hidden" id="TemperanceGroup">
-    <div class="viewport" id="dragViewportTemperance">
-      <div class="tree-container" id="dragTreeTemperance"></div>
-    </div>
+<div class="skill-group hidden" id="TemperanceGroup">
+  <div class="viewport" id="dragViewportTemperance">
+    <div class="tree-container" id="dragTreeTemperance"></div>
   </div>
+</div>
 
-  <div class="skill-group hidden" id="SpeedGroup">
-    <div class="viewport" id="dragViewportSpeed">
-      <div class="tree-container" id="dragTreeSpeed"></div>
-    </div>
+<div class="skill-group hidden" id="SpeedGroup">
+  <div class="viewport" id="dragViewportSpeed">
+    <div class="tree-container" id="dragTreeSpeed"></div>
   </div>
+</div>
 
-  <button class="Return" id="returnButton"><-</button>
+<button class="Return" id="returnButton"><-</button>
 
-  <div class="skill-info-panel" id="skillInfoPanel">
-    <div class="info-type" id="infoType">Passive</div>
-    <div class="info-title" id="infoName">Spot The Gap</div>
-    <div class="info-subtitle" id="infoBranch">[Conditional Damage Buff]</div>
-    <div class="info-desc" id="infoDesc">Deal +10% damage to Staggered targets</div>
-    <div class="info-missing" id="infoMissing">MISSING PREREQUISITE</div>
-        <div class="info-cost-display" id="infoCostDisplay">
-      <span class="info-cost-icon"></span>
-      <span id="infoCostValue">1</span>
-    </div>
-    <button class="info-unlock-button" id="infoUnlockBtn">Unlock</button>
+<div class="skill-info-panel" id="skillInfoPanel">
+  <div class="info-type" id="infoType">Passive</div>
+  <div class="info-title" id="infoName">Spot The Gap</div>
+  <div class="info-subtitle" id="infoBranch">[Conditional Damage Buff]</div>
+  <div class="info-desc" id="infoDesc">Deal +10% damage to Staggered targets</div>
+  <div class="info-missing" id="infoMissing">MISSING PREREQUISITE</div>
+  <div class="info-cost-display" id="infoCostDisplay">
+    <span class="info-cost-icon"></span>
+    <span id="infoCostValue">1</span>
   </div>
+  <button class="info-unlock-button" id="infoUnlockBtn">Unlock</button>
+</div>
 
-  <script>
-    const Equipment = {
-      Head: {
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      },
+<script>
+const SUPABASE_URL = 'https://dqjsaoqxchetthpozfzt.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_Aik1GsGSe9dho2O1Gae8JQ_vppdMDI4'; 
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      Face: {
+const Origins = {
+  "Backstreets": {
+    Bonuses: {
+    [1]: "+100 initial reputation to all Fingers (excludes the Pinky)",
+    [2]: "When recovering from knockdown, Stagger, or Panic, gain 3 Haste for 6 seconds (20s CD)",
+    [3]: "When entering combat, gain 2 Haste for 12 seconds (60s CD)",
+    },
+    Description: "From the moment you were born, you were taught to survive through fleeing. Your feet instinctively move in dangerous situations, molded from years of scraping from bottom."
+  },
+  "K Corp.": {
+    Bonuses: {
+    [1]: "Healing is increased by 15%",
+    [2]: "Start with an additional personal $5000",
+    },
+    Description: "You come from the Nest of medicinal brilliance, a place where many residents flourish under K corp's technological advancements. From your education, you know how to effectively heal."
+  },
+  "T Corp.": {
+    Bonuses: {
+    [1]: "Time consuming actions take 20% less Time (Applies to everyone)",
+    [2]: "Start Jobs with 1 Haste for 60 seconds",
+    },
+    Description: "Bein in a Nest doesn't always guaranteed fair and just treatment. T corp. allots everyone different viewpoints of time based on their social standing. literally giving more time to the wealthy. From this, you know how to effectively partition your time, allowing for tasks to be quickly done."
+  },
+  "U Corp.": {
+    Bonuses: {
+    [1]: "Gain 1/2/3 Bolstered for 20 seconds and heal +10/+20/+30 SP when reaching Below 75%/50%/25% HP (Activates once per HP threshold)",
+    [2]: "Sinking is 50% less effective on you"
+    },
+    Description: "The Great Lakes carries many rules; many laws that dominate over any sailors' mind. One must be quick to action; one must never forget the laws of the lake. Yet, you've lived to this point. A steadied mind, with a quick-thinking resolution as yours is worth a considerable amount in such a city. Your grit and struggle for survival shines through whenever you're at the end of your rope. Plus barely anything fazes you anymore."
+  },
+  "N Corp.": {
+    Bonuses: {
+    [1]: "+100 initial reputation to all Associations and Corporations",
+    [2]: "Gain 10% more reputation",
+    [3]: "All Office members gain 10% more personal EXP"
+    },
+    Description: "The Nest of bleakness is what you call home, where breaking taboos are treated as sins even for the smallest of infractions. You have been conditioned to follow rules and order, gaining the trust of superiors. But life in District 14 has its perks. You've gotten easy access to Canned Experience and can pick up things easier than other with your knowledge."
+  },
+  "X Corp.": {
+    Bonuses: {
+    [1]: "Deal 30% more damage to Abnormalities, Distortions, E.G.O. Users, and other Supernaturals",
+    [2]: "Gain 35% more defense from Equipment",
+    },
+    Description: "The only thing that matters in X corp. is whether the yield of minerals outweighs the usage. It doesn't matter if a literal monster from hell is breathing down your neck as you mine. As long as alloys keep pumping out semi-frequently, the higher ups won't see a reason for change. You know how to handle literal monsters and the ilk as well as how to make your tools more durable."
+  },
+  "J Corp.": {
+    Bonuses: {
+    [1]: "Decrease maximum and minimum SP by 5 (Max 40, Min -40)",
+    [2]: "Heads Coins increases damage by 10%",
+    },
+    Description: "Who doesn't like to dance with lade luck once in a while? In J corp, luck is the ultimate deciding factor in all of your wins. Everyone gambles, you just know how to gamble well. You know how to up the ante during Jobs, playing games of chance for better rewards."
+  },
+  "Washed Up Fixer": {
+    Bonuses: {
+      [1]: "Deal 20% less damage",
+      [2]: "Decrease Base Health by 20%",
+      [3]: "With every Grade increase, permanently deal 5% more damage, up to a 40% increase (20% net increase damage increase)",
+      [4]: "Additionally gain 1 more Skill Point when increasing Grades (8 Total)",
+    },
+    Description: "You've done this song and dance before. Risen through the ranks, had your glory days, and watched it come tumbling down. Then you were thrown away, like any other garbage in the City. How many years has it been since? Doesn't matter, it's all the same in the end. You are highly experienced in the field of Fixers, though years of combat has left your body injured, and scarred. You'll need some time to gain your edge back."
+  },
+};
 
-      },
+const Traits = {
+  Negative: {
 
-      Torso: {
+  },
+  Positive: {
 
-      },
+  }
+}
 
-      Legs: {
+const Equipment = { Head: {}, Face: {}, Torso: {}, Legs: {}, Feet: {} };
 
-      },
+const Weapons = {
+  "Rookie Sword": {}, "Rat Dagger": {}, "Nailed Bat": {}, "Scrap shockrifle": {}, "Scrap chainsword": {},
+  "Flaming Bat": {}, "Gauntlets": {}, "Leather cestuses": {}, "Mace & Shield": {}, "Blunt Blade": {},
+  "Chef's Knife": {}, "Stray Dog's Style": {}, "Serrated Machete": {}, "Moonblade & Dagger": {},
+};
 
-      Feet: {
-
-      },
-
-    }
-
-    const Weapons = {
-      "Rookie Sword": {},
-      "Rat Dagger": {},
-      "Nailed Bat": {},
-      "Scrap shockrifle": {},
-      "Scrap chainsword": {},
-
-      "Flaming Bat": {},
-      "Gauntlets": {},
-      "Leather cestuses": {},
-      "Mace & Shield": {},
-      "Blunt Blade": {},
-      "Chef's Knife": {},
-      "Stray Dog's Style": {},
-
-      "Serrated Machete": {},
-      "Moonblade & Dagger": {},
-    }
-
-    const Augmentations = {
-
-    }
-
-
-
-
+const Augmentations = {};
 
     const skillsData = {
       Instincts: {
@@ -1444,155 +1354,333 @@ border-radius: 30%;
       ]
     };
 
-       const treeWidth = 1200;
-    const treeHeight = 1000;
-    const nodeSpacing = 200;
-    const rowSpacing = 240;
+const treeWidth = 1200;
+const treeHeight = 1000;
+const nodeSpacing = 200;
+const rowSpacing = 240;
+const nodePositionsByGroup = {};
 
-    const nodePositionsByGroup = {};
+function buildTree(groupName, treeEl, categoryColor) {
+  if (!treeEl) return;
+  treeEl.innerHTML = "";
+  treeEl.style.setProperty('--category-color', categoryColor || '#ff0000');
 
-    function buildTree(groupName, treeEl, categoryColor) {
-      if (!treeEl) return;
-      treeEl.innerHTML = "";
-      treeEl.style.setProperty('--category-color', categoryColor || '#ff0000');
+  const rows = groupRows[groupName] || [];
+  const groupData = skillsData[groupName] || {};
+  const nodePositions = {};
 
-      const rows = groupRows[groupName] || [];
-      const groupData = skillsData[groupName] || {};
-      const nodePositions = {};
+  rows.forEach((rowIds, rowIndex) => {
+    const count = rowIds.length;
+    if (count === 0) return;
 
-      rows.forEach((rowIds, rowIndex) => {
-        const count = rowIds.length;
-        if (count === 0) return;
+    const totalWidth = (count - 1) * nodeSpacing;
+    const startX = (treeWidth / 2) - (totalWidth / 2);
 
-        const totalWidth = (count - 1) * nodeSpacing;
-        const startX = (treeWidth / 2) - (totalWidth / 2);
+    rowIds.forEach((id, colIndex) => {
+      const skill = groupData[id];
+      if (!skill) return;
 
-        rowIds.forEach((id, colIndex) => {
-          const skill = groupData[id];
-          if (!skill) return;
+      const leftPx = startX + colIndex * nodeSpacing;
+      const topPx = -50 + rowIndex * rowSpacing;  
+      nodePositions[id] = { left: leftPx, top: topPx };
 
-          const leftPx = startX + colIndex * nodeSpacing;
-          const topPx = -50 + rowIndex * rowSpacing;  
-          nodePositions[id] = { left: leftPx, top: topPx };
+      const wrapper = document.createElement('div');
+      wrapper.className = 'SkillNodeWrapper';
+      wrapper.style.left = `${leftPx}px`;
+      wrapper.style.top = `${topPx}px`;
+      wrapper.setAttribute('data-name', skill.name);
 
-          const wrapper = document.createElement('div');
-          wrapper.className = 'SkillNodeWrapper';
-          wrapper.style.left = `${leftPx}px`;
-          wrapper.style.top = `${topPx}px`;
-          wrapper.setAttribute('data-name', skill.name);
+      const node = document.createElement('div');
+      node.className = 'BaseSkill';
+      node.dataset.skill = id;
+      node.dataset.group = groupName;
+      if (skill.icon) node.style.backgroundImage = `url('${skill.icon}')`;
 
-          const node = document.createElement('div');
-          node.className = 'BaseSkill';
-          node.dataset.skill = id;
-          node.dataset.group = groupName;
-          if (skill.icon) node.style.backgroundImage = `url('${skill.icon}')`;
+      wrapper.appendChild(node);
+      treeEl.appendChild(wrapper);
+    });
+  });
 
-          wrapper.appendChild(node);
-          treeEl.appendChild(wrapper);
-        });
-      });
+  nodePositionsByGroup[groupName] = nodePositions;
 
-      nodePositionsByGroup[groupName] = nodePositions;
+  const WRAPPER_SIZE = 110;
+  const BOTTOM_ROMB = { leftPct: 0.84, topPct: 1.64 };
+  const TOP_ROMB    = { leftPct: 0.84, topPct: 0.17 };
 
-      const WRAPPER_SIZE = 110;
-      const BOTTOM_ROMB = { leftPct: 0.84, topPct: 1.64 };
-      const TOP_ROMB    = { leftPct: 0.84, topPct: 0.17 };
+  const rombPoint = (pos, spec) => ({
+    x: pos.left + (spec.leftPct - 0.5) * WRAPPER_SIZE,
+    y: pos.top  + (spec.topPct  - 0.5) * WRAPPER_SIZE
+  });
 
-      const rombPoint = (pos, spec) => ({
-        x: pos.left + (spec.leftPct - 0.5) * WRAPPER_SIZE,
-        y: pos.top  + (spec.topPct  - 0.5) * WRAPPER_SIZE
-      });
+  const bottomRombs = {};
+  const topRombs = {};
+  const needsBottom = new Set();
+  const needsTop = new Set();
 
-      const bottomRombs = {};
-      const topRombs = {};
-      const needsBottom = new Set();
-      const needsTop = new Set();
+  Object.keys(groupData).forEach(id => {
+    const skill = groupData[id];
+    if (!skill.requirement || skill.requirement.length === 0) return;
+    if (!nodePositions[id]) return;
+    needsBottom.add(id);
+    skill.requirement.forEach(reqId => {
+      if (nodePositions[reqId]) needsTop.add(reqId);
+    });
+  });
 
-      Object.keys(groupData).forEach(id => {
-        const skill = groupData[id];
-        if (!skill.requirement || skill.requirement.length === 0) return;
-        if (!nodePositions[id]) return;
-        needsBottom.add(id);
-        skill.requirement.forEach(reqId => {
-          if (nodePositions[reqId]) needsTop.add(reqId);
-        });
-      });
+  Object.keys(nodePositions).forEach(id => {
+    const pos = nodePositions[id];
+    const wrapper = treeEl.querySelector(
+      `.BaseSkill[data-skill="${id}"][data-group="${groupName}"]`
+    )?.parentElement;
+    if (!wrapper) return;
 
-      Object.keys(nodePositions).forEach(id => {
-        const pos = nodePositions[id];
-        const wrapper = treeEl.querySelector(
-          `.BaseSkill[data-skill="${id}"][data-group="${groupName}"]`
-        )?.parentElement;
-        if (!wrapper) return;
-
-        if (needsBottom.has(id)) {
-          bottomRombs[id] = rombPoint(pos, BOTTOM_ROMB);
-          const r = document.createElement('div');
-          r.className = 'node-romb bottom';
-          wrapper.appendChild(r);
-        }
-
-        if (needsTop.has(id)) {
-          topRombs[id] = rombPoint(pos, TOP_ROMB);
-          const r = document.createElement('div');
-          r.className = 'node-romb top';
-          wrapper.appendChild(r);
-        }
-      });
-
-      Object.keys(nodePositions).forEach(id => {
-        const skill = groupData[id];
-        if (!skill.requirement || skill.requirement.length === 0) return;
-        const from = bottomRombs[id];
-        if (!from) return;
-
-        skill.requirement.forEach(reqId => {
-          const to = topRombs[reqId];
-          if (!to) return;
-
-          const dx = to.x - from.x;
-          const dy = to.y - from.y;
-          const length = Math.hypot(dx, dy);
-          const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-
-          const link = document.createElement('div');
-          link.className = 'romb-link';
-          link.style.left = `${from.x}px`;
-          link.style.top = `${from.y}px`;
-          link.style.width = `${length}px`;
-          link.style.transform = `rotate(${angle}deg)`;
-          treeEl.appendChild(link);
-        });
-      });
+    if (needsBottom.has(id)) {
+      bottomRombs[id] = rombPoint(pos, BOTTOM_ROMB);
+      const r = document.createElement('div');
+      r.className = 'node-romb bottom';
+      wrapper.appendChild(r);
     }
 
-    const treeMap = {
-      InstinctsGroup:   { tree: document.getElementById('dragTree'),           viewport: document.getElementById('dragViewport'),          name: 'Instincts',  color: '#a70000' },
-      FortitudeGroup:   { tree: document.getElementById('dragTreeFortitude'),  viewport: document.getElementById('dragViewportFortitude'),  name: 'Fortitude',  color: '#10bc47' },
-      PrudenceGroup:    { tree: document.getElementById('dragTreePrudence'),   viewport: document.getElementById('dragViewportPrudence'),   name: 'Prudence',   color: '#ffffff' },
-      TemperanceGroup:  { tree: document.getElementById('dragTreeTemperance'), viewport: document.getElementById('dragViewportTemperance'), name: 'Temperance', color: '#ae3cff' },
-      SpeedGroup:       { tree: document.getElementById('dragTreeSpeed'),      viewport: document.getElementById('dragViewportSpeed'),      name: 'Haste',      color: '#fcff33' }
-    };
+    if (needsTop.has(id)) {
+      topRombs[id] = rombPoint(pos, TOP_ROMB);
+      const r = document.createElement('div');
+      r.className = 'node-romb top';
+      wrapper.appendChild(r);
+    }
+  });
 
-    Object.values(treeMap).forEach(({ name, tree, color }) => buildTree(name, tree, color));
+  Object.keys(nodePositions).forEach(id => {
+    const skill = groupData[id];
+    if (!skill.requirement || skill.requirement.length === 0) return;
+    const from = bottomRombs[id];
+    if (!from) return;
 
-    const allGroupIds = ['SkillsBgGroup', 'InstinctsGroup', 'FortitudeGroup', 'PrudenceGroup', 'TemperanceGroup', 'SpeedGroup'];
-    const uiGroup = document.getElementById('uiGroup');
-    const returnButton = document.getElementById('returnButton');
-    const skillsBgGroup = document.getElementById('SkillsBgGroup');
-    const infoPanel = document.getElementById('skillInfoPanel');
+    skill.requirement.forEach(reqId => {
+      const to = topRombs[reqId];
+      if (!to) return;
 
-    const uiInfoType = document.getElementById('infoType');
-    const uiInfoName = document.getElementById('infoName');
-    const uiInfoBranch = document.getElementById('infoBranch');
-    const uiInfoDesc = document.getElementById('infoDesc');
-    const uiInfoMissing = document.getElementById('infoMissing');
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const length = Math.hypot(dx, dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
-    const infoUnlockBtn = document.getElementById('infoUnlockBtn');
-    const infoCostValue = document.getElementById('infoCostValue');
-    const costDisplay = document.getElementById('infoCostDisplay');
+      const link = document.createElement('div');
+      link.className = 'romb-link';
+      link.style.left = `${from.x}px`;
+      link.style.top = `${from.y}px`;
+      link.style.width = `${length}px`;
+      link.style.transform = `rotate(${angle}deg)`;
+      treeEl.appendChild(link);
+    });
+  });
+}
 
-    function showGroup(groupId, color) {
+const treeMap = {
+  InstinctsGroup:   { tree: document.getElementById('dragTree'),           viewport: document.getElementById('dragViewport'),          name: 'Instincts',  color: '#a70000' },
+  FortitudeGroup:   { tree: document.getElementById('dragTreeFortitude'),  viewport: document.getElementById('dragViewportFortitude'),  name: 'Fortitude',  color: '#10bc47' },
+  PrudenceGroup:    { tree: document.getElementById('dragTreePrudence'),   viewport: document.getElementById('dragViewportPrudence'),   name: 'Prudence',   color: '#ffffff' },
+  TemperanceGroup:  { tree: document.getElementById('dragTreeTemperance'), viewport: document.getElementById('dragViewportTemperance'), name: 'Temperance', color: '#ae3cff' },
+  SpeedGroup:       { tree: document.getElementById('dragTreeSpeed'),      viewport: document.getElementById('dragViewportSpeed'),      name: 'Haste',      color: '#fcff33' }
+};
+
+Object.values(treeMap).forEach(({ name, tree, color }) => buildTree(name, tree, color));
+
+const allGroupIds = ['SkillsBgGroup', 'InstinctsGroup', 'FortitudeGroup', 'PrudenceGroup', 'TemperanceGroup', 'SpeedGroup'];
+const uiGroup = document.getElementById('uiGroup');
+const returnButton = document.getElementById('returnButton');
+const skillsBgGroup = document.getElementById('SkillsBgGroup');
+const infoPanel = document.getElementById('skillInfoPanel');
+
+const uiInfoType = document.getElementById('infoType');
+const uiInfoName = document.getElementById('infoName');
+const uiInfoBranch = document.getElementById('infoBranch');
+const uiInfoDesc = document.getElementById('infoDesc');
+const uiInfoMissing = document.getElementById('infoMissing');
+
+const infoUnlockBtn = document.getElementById('infoUnlockBtn');
+const infoCostValue = document.getElementById('infoCostValue');
+const costDisplay = document.getElementById('infoCostDisplay');
+
+const gradeDisplay = document.getElementById('gradeDisplay');
+const gradeBarFill = document.getElementById('gradeBarFill');
+const skillPointDisplay = document.getElementById('skillPointDisplay');
+const addXpBtn = document.getElementById('addXpBtn');
+const removeXpBtn = document.getElementById('removeXpBtn');
+
+const selectTrigger = document.getElementById('selectTrigger');
+const selectOptions = document.getElementById('selectOptions');
+const selectedOriginText = document.getElementById('selectedOriginText');
+const optionsList = document.getElementById('optionsList');
+const originTooltip = document.getElementById('originTooltip');
+
+let currentGrade = 9;
+let currentXP = 0;
+let skillPoints = 0;
+let currentOrigin = "Backstreets";
+const unlockedSkills = new Set();
+let currentBuildId = null; 
+
+Object.keys(Origins).forEach(originName => {
+  const optionDiv = document.createElement('div');
+  optionDiv.className = 'select-option';
+  optionDiv.textContent = originName;
+  optionDiv.dataset.value = originName;
+  
+  optionDiv.addEventListener('mouseenter', () => {
+    const bonuses = Origins[originName].Bonuses;
+    originTooltip.innerHTML = ''; 
+    
+    if (bonuses) {
+      Object.values(bonuses).forEach(bonusText => {
+        const bonusDiv = document.createElement('div');
+        bonusDiv.className = 'tooltip-bonus';
+        bonusDiv.textContent = bonusText;
+        originTooltip.appendChild(bonusDiv);
+      });
+    }
+    
+    originTooltip.classList.add('active');
+  });
+  
+  optionDiv.addEventListener('click', () => {
+    const newOrigin = originName;
+    const bonusPoints = 9 - currentGrade;
+    
+    if (currentOrigin === "Washed Up Fixer" && newOrigin !== "Washed Up Fixer") {
+      skillPoints -= bonusPoints;
+    } else if (currentOrigin !== "Washed Up Fixer" && newOrigin === "Washed Up Fixer") {
+      skillPoints += bonusPoints;
+    }
+    
+    currentOrigin = newOrigin;
+    selectedOriginText.textContent = currentOrigin;
+    skillPointDisplay.textContent = skillPoints;
+    
+    selectOptions.classList.remove('open');
+    originTooltip.classList.remove('active');
+    saveToLocal();
+    refreshCurrentPanel();
+  });
+  
+  optionsList.appendChild(optionDiv);
+});
+
+selectTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  selectOptions.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('customSelect').contains(e.target)) {
+    selectOptions.classList.remove('open');
+    originTooltip.classList.remove('active');
+  }
+});
+
+function updateStats() {
+  let healthMult = 0;
+  let staggerMult = 0;
+  let defenseMult = 0;
+  let damageMult = 0;
+
+  unlockedSkills.forEach(key => {
+    const [group, id] = key.split(':');
+    const data = skillsData[group]?.[id];
+    if (!data) return;
+
+    
+    if (data.name.includes("Health Boost I")) healthMult += 5;
+    if (data.name.includes("Health Boost II")) healthMult += 5;
+    if (data.name.includes("Health Boost III")) healthMult += 5;
+    
+    if (data.name.includes("Defense Boost I")) defenseMult += 5;
+    if (data.name.includes("Defense Boost II")) defenseMult += 5;
+    
+    if (data.name.includes("Stagger Resistance I")) staggerMult += 5;
+    if (data.name.includes("Stagger Resistance II")) staggerMult += 5;
+    if (data.name.includes("Stagger Resistance III")) staggerMult += 5;
+
+    if (data.name.includes("Damage I") || data.name.includes("Damage II")) damageMult += 5;
+  });
+
+  document.getElementById('healthMultDisplay').textContent = `${healthMult}%`;
+  document.getElementById('staggerMultDisplay').textContent = `${staggerMult}%`;
+  document.getElementById('defenseMultDisplay').textContent = `${defenseMult}%`;
+  document.getElementById('damageMultDisplay').textContent = `${damageMult}%`;
+
+  const baseHealth = 150;
+  const baseStagger = 100;
+  const baseDefense = 80;
+
+  const finalHealth = Math.floor(baseHealth * (1 + healthMult / 100));
+  const finalStagger = Math.floor(baseStagger * (1 + staggerMult / 100));
+  const finalDefense = Math.floor(baseDefense * (1 + defenseMult / 100));
+
+  document.getElementById('sideHealth').textContent = finalHealth;
+  document.getElementById('sideStagger').textContent = finalStagger;
+  document.getElementById('sideDefense').textContent = finalDefense;
+  
+  const defenseReduction = (finalDefense / (finalDefense + 80) * 100).toFixed(2);
+  document.querySelector('.stat-reduction').textContent = `${defenseReduction}% reduction of base damage`;
+}
+
+function saveToLocal() {
+  const localState = {
+    currentGrade,
+    currentXP,
+    skillPoints,
+    currentOrigin,
+    unlockedSkills: Array.from(unlockedSkills)
+  };
+  localStorage.setItem('purgatorio_build', JSON.stringify(localState));
+}
+
+function loadFromLocal() {
+  const saved = localStorage.getItem('purgatorio_build');
+  if (!saved) return false;
+  
+  try {
+    const data = JSON.parse(saved);
+    currentGrade = data.currentGrade ?? 9;
+    currentXP = data.currentXP ?? 0;
+    skillPoints = data.skillPoints ?? 0;
+    currentOrigin = data.currentOrigin ?? "Backstreets";
+    
+    selectedOriginText.textContent = currentOrigin;
+    
+    unlockedSkills.clear();
+    if (data.unlockedSkills) {
+      data.unlockedSkills.forEach(key => unlockedSkills.add(key));
+    }
+    
+    gradeDisplay.textContent = `Grade ${currentGrade}`;
+    skillPointDisplay.textContent = skillPoints;
+    gradeBarFill.style.transition = '0s';
+    gradeBarFill.style.width = `${(currentXP / 3) * 100}%`;
+    
+    document.querySelectorAll('.BaseSkill').forEach(node => {
+      const group = node.dataset.group;
+      const id = node.dataset.skill;
+      const skillData = skillsData[group]?.[id];
+      if (skillData?.icon) node.style.backgroundImage = `url('${skillData.icon}')`;
+    });
+
+    unlockedSkills.forEach(key => {
+      const [group, id] = key.split(':');
+      const node = document.querySelector(`.BaseSkill[data-skill="${id}"][data-group="${group}"]`);
+      if (node) node.style.backgroundImage = `url('SkillBG-Active.png')`;
+    });
+    
+    refreshCategoryDisplays();
+    updateStats(); // Update stats on load
+    return true;
+  } catch (e) {
+    console.error("Local load failed", e);
+    return false;
+  }
+}
+
+function showGroup(groupId, color) {
   uiGroup.classList.add('hidden');
   allGroupIds.forEach(id => document.getElementById(id).classList.add('hidden'));
 
@@ -1616,13 +1704,13 @@ border-radius: 30%;
   }
 }
 
-    document.querySelector('.button-row').addEventListener('click', function (e) {
-      const button = e.target.closest('button');
-      if (!button) return;
-      showGroup(button.dataset.group, button.dataset.color);
-    });
+document.querySelector('.button-row').addEventListener('click', function (e) {
+  const button = e.target.closest('button');
+  if (!button) return;
+  showGroup(button.dataset.group, button.dataset.color);
+});
 
-    returnButton.addEventListener('click', function () {
+returnButton.addEventListener('click', function () {
   allGroupIds.forEach(id => document.getElementById(id).classList.add('hidden'));
   uiGroup.classList.remove('hidden');
   returnButton.classList.remove('visible');
@@ -1630,164 +1718,85 @@ border-radius: 30%;
   document.body.classList.remove('hud-down');  
 });
 
-  
-    const sharedBgEl = document.querySelector('.SkillsBackground');
+const sharedBgEl = document.querySelector('.SkillsBackground');
 
-    Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
-      if (!viewport || !tree) return;
+Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
+  if (!viewport || !tree) return;
 
-      let isDragging = false;
-      let startX, startY;
-      let dragX = 0, dragY = 0;
+  let isDragging = false;
+  let startX, startY;
+  let dragX = 0, dragY = 0;
 
-      function computeDragBounds() {
-  const positions = Object.values(nodePositionsByGroup[name] || {});
-  if (positions.length === 0) return { maxX: 0, maxY: 0 };
+  function computeDragBounds() {
+    const positions = Object.values(nodePositionsByGroup[name] || {});
+    if (positions.length === 0) return { maxX: 0, maxY: 0 };
 
-  const NODE_HALF = 55;
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (const p of positions) {
-    minX = Math.min(minX, p.left - NODE_HALF);
-    maxX = Math.max(maxX, p.left + NODE_HALF);
-    minY = Math.min(minY, p.top  - NODE_HALF);
-    maxY = Math.max(maxY, p.top  + NODE_HALF);
+    const NODE_HALF = 55;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const p of positions) {
+      minX = Math.min(minX, p.left - NODE_HALF);
+      maxX = Math.max(maxX, p.left + NODE_HALF);
+      minY = Math.min(minY, p.top  - NODE_HALF);
+      maxY = Math.max(maxY, p.top  + NODE_HALF);
+    }
+
+    const TREE_ORIGIN_X = treeWidth / 2;
+    const TREE_ORIGIN_Y = treeHeight / 2;
+
+    const vpRect = viewport.getBoundingClientRect();
+    const halfVpW = vpRect.width  / 2;
+    const halfVpH = vpRect.height / 2;
+
+    const extraPadding = 250;
+
+    const distLeft   = TREE_ORIGIN_X - minX;  
+    const distRight  = maxX - TREE_ORIGIN_X;   
+    const distUp     = TREE_ORIGIN_Y - minY;  
+    const distDown   = maxY - TREE_ORIGIN_Y;   
+
+    const needLeft  = distRight - halfVpW + extraPadding; 
+    const needRight = distLeft  - halfVpW + extraPadding;
+    const needUp    = distDown  - halfVpH + extraPadding; 
+    const needDown  = distUp    - halfVpH + extraPadding; 
+
+    const boundX = Math.max(0, needLeft, needRight);
+    const boundY = Math.max(0, needUp, needDown);
+
+    return { maxX: boundX, maxY: boundY };
   }
 
-  const TREE_ORIGIN_X = treeWidth / 2;
-  const TREE_ORIGIN_Y = treeHeight / 2;
-
-  const vpRect = viewport.getBoundingClientRect();
-  const halfVpW = vpRect.width  / 2;
-  const halfVpH = vpRect.height / 2;
-
-  const extraPadding = 250;
-
-  const distLeft   = TREE_ORIGIN_X - minX;  
-  const distRight  = maxX - TREE_ORIGIN_X;   
-  const distUp     = TREE_ORIGIN_Y - minY;  
-  const distDown   = maxY - TREE_ORIGIN_Y;   
-
-  const needLeft  = distRight - halfVpW + extraPadding; 
-  const needRight = distLeft  - halfVpW + extraPadding;
-  const needUp    = distDown  - halfVpH + extraPadding; 
-  const needDown  = distUp    - halfVpH + extraPadding; 
-
-  const boundX = Math.max(0, needLeft, needRight);
-  const boundY = Math.max(0, needUp, needDown);
-
-  return { maxX: boundX, maxY: boundY };
-}
-
-      viewport.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.skill-info-panel')) return;
-        isDragging = true;
-        startX = e.clientX - dragX;
-        startY = e.clientY - dragY;
-        viewport.style.cursor = 'grabbing';
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        const { maxX, maxY } = computeDragBounds();
-        const targetX = e.clientX - startX;
-        const targetY = e.clientY - startY;
-        dragX = Math.max(-maxX, Math.min(maxX, targetX));
-        dragY = Math.max(-maxY, Math.min(maxY, targetY));
-        tree.style.transform = `translate(${dragX}px, ${dragY}px)`;
-        if (sharedBgEl) {
-          sharedBgEl.style.backgroundPosition = `calc(50% + ${dragX}px) calc(50% + ${dragY}px)`;
-        }
-      });
-
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-        viewport.style.cursor = 'grab';
-      });
-
-   
-      viewport._resetDrag = () => {
-  dragX = 0;
-  dragY = 0;
-  if (sharedBgEl) sharedBgEl.style.backgroundPosition = 'center';
-};
-});
-
-
-let currentGrade = 9;
-    let currentXP = 0;
-    let skillPoints = 0;
-
-    const unlockedSkills = new Set();
-
-
-
-    // Main Save n Load system
-const SAVE_KEY = 'purgatorio-builder-save-v1';
-
-function saveState() {
-  const state = {
-    currentGrade,
-    currentXP,
-    skillPoints,
-    unlockedSkills: Array.from(unlockedSkills),
-  };
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  } catch (e) {
-    console.warn('Failed to save state:', e);
-  }
-}
-
-function loadState() {
-  let raw;
-  try {
-    raw = localStorage.getItem(SAVE_KEY);
-  } catch (e) {
-    return;
-  }
-  if (!raw) return;
-
-  let state;
-  try {
-    state = JSON.parse(raw);
-  } catch (e) {
-    return;
-  }
-
-  if (typeof state.currentGrade === 'number') currentGrade = state.currentGrade;
-  if (typeof state.currentXP === 'number')    currentXP = state.currentXP;
-  if (typeof state.skillPoints === 'number')  skillPoints = state.skillPoints;
-
-  unlockedSkills.clear();
-  if (Array.isArray(state.unlockedSkills)) {
-    state.unlockedSkills.forEach(key => {
-      const [group, id] = key.split(':');
-      if (skillsData[group]?.[id]) unlockedSkills.add(key);
-    });
-  }
-
-  unlockedSkills.forEach(key => {
-    const [group, id] = key.split(':');
-    const node = document.querySelector(
-      `.BaseSkill[data-skill="${id}"][data-group="${group}"]`
-    );
-    if (node) node.style.backgroundImage = `url('SkillBG-Active.png')`;
+  viewport.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.skill-info-panel')) return;
+    isDragging = true;
+    startX = e.clientX - dragX;
+    startY = e.clientY - dragY;
+    viewport.style.cursor = 'grabbing';
   });
 
-  gradeDisplay.textContent = `Grade ${currentGrade}`;
-  skillPointDisplay.textContent = skillPoints;
-  gradeBarFill.style.transition = '0s';
-  gradeBarFill.style.width = `${(currentXP / 3) * 100}%`;
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const { maxX, maxY } = computeDragBounds();
+    const targetX = e.clientX - startX;
+    const targetY = e.clientY - startY;
+    dragX = Math.max(-maxX, Math.min(maxX, targetX));
+    dragY = Math.max(-maxY, Math.min(maxY, targetY));
+    tree.style.transform = `translate(${dragX}px, ${dragY}px)`;
+    if (sharedBgEl) {
+      sharedBgEl.style.backgroundPosition = `calc(50% + ${dragX}px) calc(50% + ${dragY}px)`;
+    }
+  });
 
-  refreshCategoryDisplays();
-}
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    viewport.style.cursor = 'grab';
+  });
 
-function resetSave() {
-  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
-  location.reload();
-}
-window.resetSave = resetSave;
-
+  viewport._resetDrag = () => {
+    dragX = 0;
+    dragY = 0;
+    if (sharedBgEl) sharedBgEl.style.backgroundPosition = 'center';
+  };
+});
 
 function collectPrerequisiteChain(groupName, targetId) {
   const groupData = skillsData[groupName];
@@ -1845,7 +1854,7 @@ function collectPrerequisiteChain(groupName, targetId) {
   return order;
 }
 
-  function refreshInfoPanel(data, groupName, skillId) {
+function refreshInfoPanel(data, groupName, skillId) {
   const isUnlocked = unlockedSkills.has(`${groupName}:${skillId}`);
 
   if (isUnlocked) {
@@ -1881,7 +1890,7 @@ function collectPrerequisiteChain(groupName, targetId) {
     infoCostValue.textContent = `${ownCost}`;
   }
 
-    const canAfford = skillPoints >= totalCost;
+  const canAfford = skillPoints >= totalCost;
 
   infoUnlockBtn.textContent = 'Unlock'
   infoUnlockBtn.disabled = !canAfford;
@@ -1913,7 +1922,6 @@ function refreshCategoryDisplays() {
   });
 }
 
-
 function refreshCurrentPanel() {
   const skillId = infoUnlockBtn.dataset.skill;
   const groupName = infoUnlockBtn.dataset.group;
@@ -1923,8 +1931,7 @@ function refreshCurrentPanel() {
   refreshInfoPanel(data, groupName, skillId);
 }
 
-
-    document.addEventListener('click', function (e) {
+document.addEventListener('click', function (e) {
   const wrapper = e.target.closest('.SkillNodeWrapper');
   if (wrapper) {
     const node = wrapper.querySelector('.BaseSkill');
@@ -1948,7 +1955,6 @@ function refreshCurrentPanel() {
       uiInfoBranch.textContent = data.branch;
       uiInfoDesc.textContent = data.desc;
 
-
       infoUnlockBtn.dataset.skill = skillId;
       infoUnlockBtn.dataset.group = groupName;
 
@@ -1959,7 +1965,7 @@ function refreshCurrentPanel() {
   }
 });
 
-  infoUnlockBtn.addEventListener('click', () => {
+infoUnlockBtn.addEventListener('click', () => {
   const skillId = infoUnlockBtn.dataset.skill;
   const groupName = infoUnlockBtn.dataset.group;
   const groupData = skillsData[groupName];
@@ -2000,11 +2006,11 @@ function refreshCurrentPanel() {
 
     skillPointDisplay.textContent = skillPoints;
     refreshInfoPanel(data, groupName, skillId);
-    refreshCategoryDisplays()
-    saveState();
+    refreshCategoryDisplays();
+    updateStats(); // Update stats
+    saveToLocal();
     return;
   }
-
 
   const chain = collectPrerequisiteChain(groupName, skillId);
   const totalCost = chain.reduce(
@@ -2030,60 +2036,63 @@ function refreshCurrentPanel() {
 
   skillPointDisplay.textContent = skillPoints;
   refreshInfoPanel(data, groupName, skillId);
-  refreshCategoryDisplays()
-  saveState();
+  refreshCategoryDisplays();
+  updateStats(); // Update stats
+  saveToLocal();
 });
 
-    const gradeDisplay = document.getElementById('gradeDisplay');
-    const gradeBarFill = document.getElementById('gradeBarFill');
-    const skillPointDisplay = document.getElementById('skillPointDisplay');
-    const addXpBtn = document.getElementById('addXpBtn');
-    const removeXpBtn = document.getElementById('removeXpBtn');
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const ChangeBar = (TransSpeed, fillPercentage) => {
+  gradeBarFill.style.transition = TransSpeed;
+  gradeBarFill.style.width = `${fillPercentage}%`;
+  skillPointDisplay.textContent = `${skillPoints}`;
+  refreshCurrentPanel(); 
+  saveToLocal();
+};
 
-    const ChangeBar = (TransSpeed, fillPercentage) => {
-      gradeBarFill.style.transition = TransSpeed;
-      gradeBarFill.style.width = `${fillPercentage}%`;
-      skillPointDisplay.textContent = `${skillPoints}`;
-      refreshCurrentPanel(); 
-    };
+const PromotionBar = async () => {
+  ChangeBar("0.3s", 100);
+  await wait(200);
+  ChangeBar("0s", 0);
+  gradeDisplay.textContent = `Grade ${currentGrade}`;
+  skillPointDisplay.textContent = `${skillPoints}`;
+};
 
-    const PromotionBar = async () => {
-      ChangeBar("0.3s", 100);
-      await wait(200);
-      ChangeBar("0s", 0);
-      gradeDisplay.textContent = `Grade ${currentGrade}`;
-      skillPointDisplay.textContent = `${skillPoints}`;
-    };
+const DemotionBar = async () => {
+  ChangeBar("0s", 100);
+  await wait(200);
+  ChangeBar("0.3s", (currentXP / 3) * 100);
+  gradeDisplay.textContent = `Grade ${currentGrade}`;
+  skillPointDisplay.textContent = `${skillPoints}`;
+};
 
-    const DemotionBar = async () => {
-      ChangeBar("0s", 100);
-      await wait(200);
-      ChangeBar("0.3s", (currentXP / 3) * 100);
-      gradeDisplay.textContent = `Grade ${currentGrade}`;
-      skillPointDisplay.textContent = `${skillPoints}`;
-    };
-
-    addXpBtn.addEventListener('click', () => {
-      if (currentGrade === 1 && currentXP >= 3) return;
-      currentXP += 1;
-      skillPoints += 1;
-      if (currentXP >= 3) {
-        if (currentGrade > 1) {
-          currentXP = 0;
-          currentGrade -= 1;
-          PromotionBar();
-        } else {
-          ChangeBar("0.3s", 100);
-        }
+addXpBtn.addEventListener('click', () => {
+  if (currentGrade === 1 && currentXP >= 3) return;
+  currentXP += 1;
+  
+  if (currentXP >= 3) {
+    if (currentGrade > 1) {
+      currentXP = 0;
+      currentGrade -= 1;
+      if (currentOrigin === "Washed Up Fixer") {
+        skillPoints += 2;
       } else {
-        ChangeBar("0.3s", (currentXP / 3) * 100);
+        skillPoints += 1;
       }
-      saveState();
-    });
+      
+      PromotionBar();
+    } else {
+      skillPoints += 1;
+      ChangeBar("0.3s", 100);
+    }
+  } else {
+    skillPoints += 1;
+    ChangeBar("0.3s", (currentXP / 3) * 100);
+  }
+});
 
-    removeXpBtn.addEventListener('click', () => {
+removeXpBtn.addEventListener('click', () => {
       if (currentGrade === 9 && currentXP === 0) return;
       if (skillPoints <= 0) return;
       skillPoints -= 1;
@@ -2103,8 +2112,6 @@ function refreshCurrentPanel() {
       }
       saveState();
     });
-
-
 
 const sidePanelToggle = document.getElementById('sidePanelToggle');
 const sidePanel = document.getElementById('sidePanel');
@@ -2127,212 +2134,156 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && sidePanelOpen) setSidePanel(false);
 });
 
+async function shareOrSaveBuild() {
+  const btn = document.getElementById('shareBuildBtn');
+  const originalText = btn.textContent;
+  btn.textContent = "Saving...";
 
+   try {
+    let data, error;
 
+    if (currentBuildId) {
+      const res = await db.from('global_build').update({
+        currentgrade: currentGrade,
+        currentxp: currentXP,
+        skillpoints: skillPoints,
+        currentorigin: currentOrigin,
+        unlockedskills: Array.from(unlockedSkills),
+        updated_at: new Date().toISOString()
+      }).eq('id', currentBuildId).select().single();
+      data = res.data; error = res.error;
+      if (error) throw error;
+    } else {
+      const shortId = Math.random().toString(36).substring(2, 8);
+      
+      const response = await db.from('global_build').insert([
+        {
+          short_id: shortId, 
+          currentgrade: currentGrade,      
+          currentxp: currentXP,            
+          skillpoints: skillPoints,
+          currentorigin: currentOrigin,
+          unlockedskills: Array.from(unlockedSkills) 
+        }
+      ]).select().single();
+      
+      data = response.data;
+      error = response.error;
+      if (error) throw error;
+    }
+    
+    currentBuildId = data.id;
+    const urlId = data.short_id || data.id; 
+    const newUrl = `${location.origin}${location.pathname}?b=${urlId}`;
+    window.history.replaceState({ path: newUrl }, '', newUrl);
 
-// Build load section
-const FORMAT_VERSION = 1;
+    await navigator.clipboard.writeText(newUrl);
+    btn.textContent = 'Link Copied!';
+    btn.classList.add('copied');
+    
+  } catch (e) {
+    console.error(e);
+    btn.textContent = "Error!";
+  }
 
-const SKILL_INDEX = {
-  Instincts:  ['i1','i2','i3','i4','i5','i6','i7','i8','i9','i10','i11','i12',
-               'i13','i14','i15','i16','i17','i18','i19','i20','i21','i22','i23','i24'],
-  Fortitude:  ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11','f12',
-               'f13','f14','f15','f16','f17','f18','f19','f20','f21','f22','f23','f24'],
-  Prudence:   ['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','p11','p12',
-               'p13','p14','p15','p16','p17','p18','p19','p20','p21','p22','p23'],
-  Temperance: ['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13',
-               't14','t15','t16','t17','t18','t19','t20','t21','t22','t23','t24','t25','t26','t27','t28'],
-  Haste:      ['h1','h2','h3','h4','h5','h6','h7','h8','h9','h10','h11','h12','h13',
-               'h14','h15','h16','h17','h18','h19','h20','h21','h22','h23','h24','h25',
-               'h26','h27','h28','h29','h30','h31'],
-};
-Object.entries(skillsData).forEach(([group, skills]) => {
-  const known = new Set(SKILL_INDEX[group] || []);
-  Object.keys(skills).forEach(id => {
-    if (!known.has(id)) console.warn(`[share] ${group}:${id} missing from SKILL_INDEX`);
-  });
-});
+  setTimeout(() => { btn.textContent = originalText; btn.classList.remove('copied'); }, 1600);
+}
+
+async function loadBuildFromDB() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const shortId = urlParams.get('b') || urlParams.get('build_id'); 
+  
+  if (!shortId) return false;
+
+  try {
+    const isUuid = shortId.length > 20;
+    const query = db.from('global_build').select('*');
+    
+    const { data, error } = isUuid 
+      ? await query.eq('id', shortId).single()
+      : await query.eq('short_id', shortId).single();
+
+    if (error) throw error;
+    if (!data) return false;
+
+    currentBuildId = data.id;
+    currentGrade = data.currentgrade;
+    currentXP = data.currentxp;
+    skillPoints = data.skillpoints;
+    currentOrigin = data.currentorigin || "Backstreets";
+    
+    selectedOriginText.textContent = currentOrigin;
+
+    unlockedSkills.clear();
+    if (data.unlockedskills) {
+      data.unlockedskills.forEach(key => unlockedSkills.add(key));
+    }
+
+    gradeDisplay.textContent = `Grade ${currentGrade}`;
+    skillPointDisplay.textContent = skillPoints;
+    gradeBarFill.style.transition = '0s';
+    gradeBarFill.style.width = `${(currentXP / 3) * 100}%`;
+
+    unlockedSkills.forEach(key => {
+      const [group, id] = key.split(':');
+      const node = document.querySelector(`.BaseSkill[data-skill="${id}"][data-group="${group}"]`);
+      if (node) node.style.backgroundImage = `url('SkillBG-Active.png')`;
+    });
+
+    refreshCategoryDisplays();
+    updateStats(); // Update stats on load
+    saveToLocal();
+    return true;
+  } catch (e) {
+    console.error("Failed to load DB build:", e);
+    return false;
+  }
+}
 
 const shareBuildBtn = document.getElementById('shareBuildBtn');
-
-
-function encodeBuild() {
-  const groups = Object.keys(SKILL_INDEX);
-const bytes = [
-      FORMAT_VERSION,
-    currentGrade & 0xFF,
-    currentXP & 0xFF,
-    skillPoints & 0xFF,
-    0
-  ];
-
-  groups.forEach(group => {
-  const ids = SKILL_INDEX[group];
-  const words = new Uint32Array(Math.ceil(ids.length / 32));
-  ids.forEach((id, i) => {
-    if (unlockedSkills.has(`${group}:${id}`)) {
-      words[i >> 5] |= (1 << (i & 31));
-    }
-  });
-  words.forEach(w => {
-    bytes.push(w & 0xFF, (w >>> 8) & 0xFF, (w >>> 16) & 0xFF, (w >>> 24) & 0xFF);
-  });
-});
-
-
-  const b64 = btoa(String.fromCharCode(...bytes))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  return b64;
-}
-
-function decodeBuild(str) {
-  try {
-    const b64 = str.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
-    const bin = atob(padded);
-    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
-
-        let i = 0;
-    const version = bytes[i++];
-    if (version !== FORMAT_VERSION) {
-      return null;} 
-    const g = bytes[i++];
-    const x = bytes[i++];
-    const p = bytes[i++];
-    i++; 
-
-    const skills = [];
-    Object.keys(SKILL_INDEX).forEach(group => {
-      const ids = SKILL_INDEX[group];
-      const words = Math.ceil(ids.length / 32);
-      for (let w = 0; w < words; w++) {
-        const word = bytes[i++] | (bytes[i++] << 8) | (bytes[i++] << 16) | (bytes[i++] << 24);
-        ids.forEach((id, bit) => {
-          if ((bit >> 5) === w && (word & (1 << (bit & 31)))) {
-            skills.push(`${group}:${id}`);
-          }
-        });
-      }
-    });
-
-    return { g, x, p, s: skills };
-  } catch (e) {
-    return null;
-  }
-}
-
-
-
-
-function applyBuild(payload) {
-  if (!payload) return false;
-
-  if (typeof payload.g === 'number') currentGrade = payload.g;
-  if (typeof payload.x === 'number') currentXP    = payload.x;
-  if (typeof payload.p === 'number') skillPoints  = payload.p;
-
-  unlockedSkills.clear();
-  if (Array.isArray(payload.s)) {
-    payload.s.forEach(key => {
-      const [group, id] = key.split(':');
-      if (skillsData[group]?.[id]) unlockedSkills.add(key);
-    });
-  }
-
-  document.querySelectorAll('.BaseSkill').forEach(node => {
-    const group = node.dataset.group;
-    const id = node.dataset.skill;
-    const data = skillsData[group]?.[id];
-    if (!data) return;
-    const active = unlockedSkills.has(`${group}:${id}`);
-    node.style.backgroundImage =
-      `url('${active ? 'SkillBG-Active.png' : data.icon}')`;
-  });
-
-  gradeDisplay.textContent = `Grade ${currentGrade}`;
-  skillPointDisplay.textContent = skillPoints;
-  gradeBarFill.style.transition = '0s';
-  gradeBarFill.style.width = `${(currentXP / 3) * 100}%`;
-
-  refreshCategoryDisplays();
-  infoPanel.classList.remove('visible');
-  document.querySelectorAll('.SkillNodeWrapper').forEach(n => n.classList.remove('selected'));
-
-  return true;
-}
-
-// Cool Share build button 
-shareBuildBtn.addEventListener('click', async () => {
-  const encoded = encodeBuild();
-  const url = `${location.origin}${location.pathname}#build=${encoded}`;
-
-  const originalText = shareBuildBtn.textContent;
-
-  try {
-    await navigator.clipboard.writeText(url);
-    shareBuildBtn.textContent = 'Copied!';
-    shareBuildBtn.classList.add('copied');
-  } catch (e) {
-    shareBuildBtn.textContent = 'Link ready';
-    shareBuildBtn.classList.add('copied');
-  }
-
-  setTimeout(() => {
-    shareBuildBtn.textContent = originalText;
-    shareBuildBtn.classList.remove('copied');
-  }, 1600);
-});
-
-
+shareBuildBtn.replaceWith(shareBuildBtn.cloneNode(true));
+document.getElementById('shareBuildBtn').addEventListener('click', shareOrSaveBuild);
 
 const newBuildBtn = document.getElementById('newBuildBtn');
+newBuildBtn.replaceWith(newBuildBtn.cloneNode(true)); 
+document.getElementById('newBuildBtn').addEventListener('click', () => {
+    currentBuildId = null;
+    currentGrade = 9;
+    currentXP = 0;
+    skillPoints = 0;
+    currentOrigin = "Backstreets";
+    selectedOriginText.textContent = currentOrigin;
+    unlockedSkills.clear();
+    localStorage.removeItem('purgatorio_build');
 
-newBuildBtn.addEventListener('click', () => {
-  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    document.querySelectorAll('.BaseSkill').forEach(node => {
+      const group = node.dataset.group;
+      const id = node.dataset.skill;
+      const data = skillsData[group]?.[id];
+      if (data?.icon) node.style.backgroundImage = `url('${data.icon}')`;
+    });
 
-  currentGrade = 9;
-  currentXP = 0;
-  skillPoints = 0;
-  unlockedSkills.clear();
+    gradeDisplay.textContent = `Grade ${currentGrade}`;
+    skillPointDisplay.textContent = skillPoints;
+    gradeBarFill.style.transition = '0s';
+    gradeBarFill.style.width = '0%';
 
-  document.querySelectorAll('.BaseSkill').forEach(node => {
-    const group = node.dataset.group;
-    const id = node.dataset.skill;
-    const data = skillsData[group]?.[id];
-    if (data?.icon) node.style.backgroundImage = `url('${data.icon}')`;
-  });
+    refreshCategoryDisplays();
+    updateStats(); 
+    infoPanel.classList.remove('visible');
+    document.querySelectorAll('.SkillNodeWrapper').forEach(n => n.classList.remove('selected'));
 
-  gradeDisplay.textContent = `Grade ${currentGrade}`;
-  skillPointDisplay.textContent = skillPoints;
-  gradeBarFill.style.transition = '0s';
-  gradeBarFill.style.width = '0%';
-
-
-  refreshCategoryDisplays();
-
-
-  infoPanel.classList.remove('visible');
-  document.querySelectorAll('.SkillNodeWrapper').forEach(n => n.classList.remove('selected'));
-
-  saveState();
+    const newUrl = `${location.origin}${location.pathname}`;
+    window.history.replaceState({ path: newUrl }, '', newUrl);
 });
 
-function loadBuildFromHash() {
-  const m = location.hash.match(/build=([A-Za-z0-9\-_]+)/);
-  if (!m) return false;
-
-  const payload = decodeBuild(m[1]);
-  if (!payload) return false;
-  if (!applyBuild(payload)) return false;
-
-  saveState();
-
-  return true;
-}
-
-if (!loadBuildFromHash()) {
-  loadState();
-}
+(async () => {
+  const loadedFromDB = await loadBuildFromDB();
+  
+  if (!loadedFromDB) {
+    loadFromLocal();
+  }
+})();
 </script>
 </body>
 </html>
