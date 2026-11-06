@@ -578,36 +578,27 @@
     .viewport:active { cursor: grabbing; }
 
     .tree-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 1200px;  
-      height: 1000px;
-      margin-left: -600px; 
-      margin-top: -500px;  
-      z-index: 2;
-    }
+  position: absolute;
+  top: 42%;
+  left: 48%;
+  width: 0;
+  height: 0;
+  z-index: 2;
+}
 
-    .SkillNodeWrapper {
-      position: absolute;
-      width: 110px;
-      height: 110px;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-    }
-
-    .BaseSkill {
-      position: absolute;
-      width: 140%;
-      height: 140%;
-      left: 11%;
-      top: 20%;
-      background-size: cover;
-      background-position: center;
-      background-color: transparent;
-      cursor: pointer;
-      transition: transform 0.2s ease-out, filter 0.2s;
-    }
+   .SkillNodeWrapper {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  transform: translate(-50%, -50%);
+}
+.BaseSkill {
+  position: absolute;
+  width: 140%;   
+  height: 140%;
+  left: 11%;    
+  top: 20%;     
+}
 
     .SkillNodeWrapper:hover, .SkillNodeWrapper.selected { z-index: 50; }
     .SkillNodeWrapper:hover .BaseSkill, .SkillNodeWrapper.selected .BaseSkill { transform: scale(1.15); }
@@ -1354,8 +1345,8 @@ const Augmentations = {};
       ]
     };
 
-const treeWidth = 1200;
-const treeHeight = 1000;
+const treeWidth = 100;
+const treeHeight = 200;
 const nodeSpacing = 200;
 const rowSpacing = 240;
 const nodePositionsByGroup = {};
@@ -1369,37 +1360,55 @@ function buildTree(groupName, treeEl, categoryColor) {
   const groupData = skillsData[groupName] || {};
   const nodePositions = {};
 
-  rows.forEach((rowIds, rowIndex) => {
-    const count = rowIds.length;
-    if (count === 0) return;
+const raw = {};
+rows.forEach((rowIds, rowIndex) => {
+  const count = rowIds.length;
+  if (count === 0) return;
+  const totalWidth = (count - 1) * nodeSpacing;
+  const startX = -(totalWidth / 2);        
+  const topY   = rowIndex * rowSpacing;      
 
-    const totalWidth = (count - 1) * nodeSpacing;
-    const startX = (treeWidth / 2) - (totalWidth / 2);
-
-    rowIds.forEach((id, colIndex) => {
-      const skill = groupData[id];
-      if (!skill) return;
-
-      const leftPx = startX + colIndex * nodeSpacing;
-      const topPx = -50 + rowIndex * rowSpacing;  
-      nodePositions[id] = { left: leftPx, top: topPx };
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'SkillNodeWrapper';
-      wrapper.style.left = `${leftPx}px`;
-      wrapper.style.top = `${topPx}px`;
-      wrapper.setAttribute('data-name', skill.name);
-
-      const node = document.createElement('div');
-      node.className = 'BaseSkill';
-      node.dataset.skill = id;
-      node.dataset.group = groupName;
-      if (skill.icon) node.style.backgroundImage = `url('${skill.icon}')`;
-
-      wrapper.appendChild(node);
-      treeEl.appendChild(wrapper);
-    });
+  rowIds.forEach((id, colIndex) => {
+    if (!groupData[id]) return;
+    raw[id] = { left: startX + colIndex * nodeSpacing, top: topY };
   });
+});
+
+const ids = Object.keys(raw);
+let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+ids.forEach(id => {
+  const p = raw[id];
+  minX = Math.min(minX, p.left); maxX = Math.max(maxX, p.left);
+  minY = Math.min(minY, p.top);  maxY = Math.max(maxY, p.top);
+});
+const cx = (minX + maxX) / 2;
+const cy = (minY + maxY) / 2;
+
+ids.forEach(id => {
+  nodePositions[id] = {
+    left: raw[id].left - cx,
+    top:  raw[id].top  - cy
+  };
+});
+ids.forEach(id => {
+  const skill = groupData[id];
+  const pos = nodePositions[id];
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'SkillNodeWrapper';
+  wrapper.style.left = `${pos.left}px`;
+  wrapper.style.top  = `${pos.top}px`;
+  wrapper.setAttribute('data-name', skill.name);
+
+  const node = document.createElement('div');
+  node.className = 'BaseSkill';
+  node.dataset.skill = id;
+  node.dataset.group = groupName;
+  if (skill.icon) node.style.backgroundImage = `url('${skill.icon}')`;
+
+  wrapper.appendChild(node);
+  treeEl.appendChild(wrapper);
+});
 
   nodePositionsByGroup[groupName] = nodePositions;
 
@@ -1728,42 +1737,35 @@ Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
   let dragX = 0, dragY = 0;
 
   function computeDragBounds() {
-    const positions = Object.values(nodePositionsByGroup[name] || {});
-    if (positions.length === 0) return { maxX: 0, maxY: 0 };
+  const positions = Object.values(nodePositionsByGroup[name] || {});
+  if (positions.length === 0) return { maxX: 0, maxY: 0 };
 
-    const NODE_HALF = 55;
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    for (const p of positions) {
-      minX = Math.min(minX, p.left - NODE_HALF);
-      maxX = Math.max(maxX, p.left + NODE_HALF);
-      minY = Math.min(minY, p.top  - NODE_HALF);
-      maxY = Math.max(maxY, p.top  + NODE_HALF);
-    }
-
-    const TREE_ORIGIN_X = treeWidth / 2;
-    const TREE_ORIGIN_Y = treeHeight / 2;
-
-    const vpRect = viewport.getBoundingClientRect();
-    const halfVpW = vpRect.width  / 2;
-    const halfVpH = vpRect.height / 2;
-
-    const extraPadding = 250;
-
-    const distLeft   = TREE_ORIGIN_X - minX;  
-    const distRight  = maxX - TREE_ORIGIN_X;   
-    const distUp     = TREE_ORIGIN_Y - minY;  
-    const distDown   = maxY - TREE_ORIGIN_Y;   
-
-    const needLeft  = distRight - halfVpW + extraPadding; 
-    const needRight = distLeft  - halfVpW + extraPadding;
-    const needUp    = distDown  - halfVpH + extraPadding; 
-    const needDown  = distUp    - halfVpH + extraPadding; 
-
-    const boundX = Math.max(0, needLeft, needRight);
-    const boundY = Math.max(0, needUp, needDown);
-
-    return { maxX: boundX, maxY: boundY };
+  const NODE_HALF = 55;
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const p of positions) {
+    minX = Math.min(minX, p.left - NODE_HALF);
+    maxX = Math.max(maxX, p.left + NODE_HALF);
+    minY = Math.min(minY, p.top  - NODE_HALF);
+    maxY = Math.max(maxY, p.top  + NODE_HALF);
   }
+
+  const vpRect = viewport.getBoundingClientRect();
+  const halfVpW = vpRect.width  / 2;
+  const halfVpH = vpRect.height / 2;
+ const paddingX = -300;
+const paddingY = -150;
+
+const maxXBound = Math.max(0,
+  maxX + halfVpW + paddingX,
+  -minX + halfVpW + paddingX
+);
+const maxYBound = Math.max(0,
+  maxY + halfVpH + paddingY,
+  -minY + halfVpH + paddingY
+);
+
+  return { maxX: maxXBound, maxY: maxYBound };
+}
 
   viewport.addEventListener('mousedown', (e) => {
     if (e.target.closest('.skill-info-panel')) return;
