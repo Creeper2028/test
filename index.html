@@ -1672,7 +1672,7 @@ function loadFromLocal() {
     });
     
     refreshCategoryDisplays();
-    updateStats(); // Update stats on load
+    updateStats(); 
     return true;
   } catch (e) {
     console.error("Local load failed", e);
@@ -2007,7 +2007,7 @@ infoUnlockBtn.addEventListener('click', () => {
     skillPointDisplay.textContent = skillPoints;
     refreshInfoPanel(data, groupName, skillId);
     refreshCategoryDisplays();
-    updateStats(); // Update stats
+    updateStats(); 
     saveToLocal();
     return;
   }
@@ -2037,7 +2037,7 @@ infoUnlockBtn.addEventListener('click', () => {
   skillPointDisplay.textContent = skillPoints;
   refreshInfoPanel(data, groupName, skillId);
   refreshCategoryDisplays();
-  updateStats(); // Update stats
+  updateStats();
   saveToLocal();
 });
 
@@ -2231,7 +2231,7 @@ async function loadBuildFromDB() {
     });
 
     refreshCategoryDisplays();
-    updateStats(); // Update stats on load
+    updateStats(); 
     saveToLocal();
     return true;
   } catch (e) {
