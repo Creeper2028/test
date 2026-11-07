@@ -1806,9 +1806,10 @@ Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
   });
 
   window.addEventListener('mouseup', () => {
-    isDragging = false;
-    viewport.style.cursor = 'grab';
-  });
+  if (!isDragging) return;
+  isDragging = false;
+  viewport.style.cursor = 'grab';
+});
 
   viewport.addEventListener('wheel', (e) => {
     if (document.getElementById(groupId).classList.contains('hidden')) return;
@@ -1846,19 +1847,6 @@ Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
   };
 });
 
-  window.addEventListener('mouseup', () => {
-    isDragging = false;
-    viewport.style.cursor = 'grab';
-  });
-
-
-
-viewport._resetDrag = () => {
-  dragX = 0;
-  dragY = 0;
-  zoom = 1;
-  applyTransform();
-};
 
 function collectPrerequisiteChain(groupName, targetId) {
   const groupData = skillsData[groupName];
@@ -2174,48 +2162,6 @@ removeXpBtn.addEventListener('click', () => {
       }
       saveState();
     });
-
-
-
-viewport.addEventListener('wheel', (e) => {
-  if (document.getElementById(groupId).classList.contains('hidden')) return;
-
-  e.preventDefault();
-
-  const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-  const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom + delta));
-  if (newZoom === zoom) return;
-
-  const rect = viewport.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top  + rect.height / 2;
-  const mx = e.clientX - cx; 
-  const my = e.clientY - cy;
-
-  const k = newZoom / zoom;
-  dragX = mx - (mx - dragX) * k;
-  dragY = my - (my - dragY) * k;
-
-  zoom = newZoom;
-
-  const { maxX, maxY } = computeDragBounds();
-  dragX = Math.max(-maxX, Math.min(maxX, dragX));
-  dragY = Math.max(-maxY, Math.min(maxY, dragY));
-
-  applyTransform();
-}, { passive: false });
-
-window.addEventListener('mousemove', (e) => {
-  if (!isDragging) return;
-  const { maxX, maxY } = computeDragBounds();
-  const targetX = e.clientX - startX;
-  const targetY = e.clientY - startY;
-  dragX = Math.max(-maxX, Math.min(maxX, targetX));
-  dragY = Math.max(-maxY, Math.min(maxY, targetY));
-  applyTransform();
-});
-
-
 
 const sidePanelToggle = document.getElementById('sidePanelToggle');
 const sidePanel = document.getElementById('sidePanel');
