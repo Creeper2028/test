@@ -1802,7 +1802,7 @@ const Traits = {
     "Sorrowful": {
       Description: "Lose 5 SP when ANYONE dies near you. Disables natural on-kill SP heal (Locks Sociopath)",
       Locks: ["Sociopath"],
-      Cost: 1
+      Cost: 2
     },
     "Eczemic": {
       Description: "Burn deals 50% more damage to you, and receive 1 more Burn Count from sources of Burn (Locks Adaptable)",
@@ -2138,7 +2138,7 @@ const Weapons = {
         "i8": { type: "Passive", name: "Colaphus", branch: "[Clash and Tremor]", desc: "On Clash Win, inflict 4 Tremor and +1 Tremor Count, and gain +3 Tremor Count", icon: "Skill-Icons/Colapsus.png", cost: 1, requirement: ["i2"] },
         
         "i9": { type: "Passive", name: "Arm Slice", branch: "[Clash and Bleed]", desc: "On Clash Win, inflict 4 Bleed Potency and activate Bleed once without consuming it (6s CD)", icon: "Skill-Icons/ArmSlice.png", cost: 1, requirement: ["i3", "i4"] },
-        "i10": { type: "Passive", name: "Breakthrough", branch: "[Conditional Damage Buff]", desc: "Attacks against recently Flinched target deal an additional 15% damage", icon: "Skill-Icons/breakthrough.png", cost: 1, requirement: ["i5", "i6"] },
+        "i10": { type: "Passive", name: "Breakthrough", branch: "[Conditional Damage Buff]", desc: "Attacks against recently Flinched target deal an additional 15% damage", icon: "Skill-Icons/Breakthrough.png", cost: 1, requirement: ["i5", "i6"] },
         "i11": { type: "Passive", name: "Resounding Clash", branch: "[Clash and Tremor]", desc: "On Clash Win, If target has at least 3 Tremor Count, Burst Tremor", icon: "Skill-Icons/ResoundingClash.png", cost: 1, requirement: ["i7", "i8"] },
         
         "i12": { type: "Passive", name: "Laceration", branch: "[M1 Buff]", desc: "Final M1 Inflicts 3 Bleed Potency and 2 Bleed Count", icon: "Skill-Icons/Laceration.png", cost: 1, requirement: ["i9"] },
@@ -2867,6 +2867,85 @@ Object.entries(treeMap).forEach(([groupId, { viewport, tree, name }]) => {
     zoom = 1;
     applyTransform();
   };
+
+let touchMode = null;
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let pinchStartMid = { x: 0, y: 0 };
+let pinchStartDrag = { x: 0, y: 0 };
+
+function touchDist(t1, t2) {
+  return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+}
+function touchMid(t1, t2) {
+  return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 };
+}
+
+viewport.addEventListener('touchstart', (e) => {
+  if (e.target.closest('.skill-info-panel')) return;
+
+  if (e.touches.length === 1) {
+    touchMode = 'drag';
+    startX = e.touches[0].clientX - dragX;
+    startY = e.touches[0].clientY - dragY;
+  } else if (e.touches.length === 2) {
+    touchMode = 'pinch';
+    pinchStartDist = touchDist(e.touches[0], e.touches[1]);
+    pinchStartZoom = zoom;
+    pinchStartMid  = touchMid(e.touches[0], e.touches[1]);
+    pinchStartDrag = { x: dragX, y: dragY };
+  }
+}, { passive: false });
+
+viewport.addEventListener('touchmove', (e) => {
+  if (!touchMode) return;
+  e.preventDefault();
+
+  if (touchMode === 'drag' && e.touches.length === 1) {
+    const { maxX, maxY } = computeDragBounds();
+    const targetX = e.touches[0].clientX - startX;
+    const targetY = e.touches[0].clientY - startY;
+    dragX = Math.max(-maxX, Math.min(maxX, targetX));
+    dragY = Math.max(-maxY, Math.min(maxY, targetY));
+    applyTransform();
+
+  } else if (touchMode === 'pinch' && e.touches.length === 2) {
+    const dist = touchDist(e.touches[0], e.touches[1]);
+    const scale = dist / pinchStartDist;
+    let newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchStartZoom * scale));
+    if (newZoom === zoom) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top  + rect.height / 2;
+    const mx = pinchStartMid.x - cx;
+    const my = pinchStartMid.y - cy;
+
+    const k = newZoom / pinchStartZoom;
+    dragX = mx - (mx - pinchStartDrag.x) * k;
+    dragY = my - (my - pinchStartDrag.y) * k;
+    zoom = newZoom;
+
+    const { maxX, maxY } = computeDragBounds();
+    dragX = Math.max(-maxX, Math.min(maxX, dragX));
+    dragY = Math.max(-maxY, Math.min(maxY, dragY));
+    applyTransform();
+  }
+}, { passive: false });
+
+viewport.addEventListener('touchend', (e) => {
+  if (e.touches.length === 0) {
+    touchMode = null;
+  } else if (e.touches.length === 1 && touchMode === 'pinch') {
+    touchMode = 'drag';
+    startX = e.touches[0].clientX - dragX;
+    startY = e.touches[0].clientY - dragY;
+  }
+});
+
+viewport.addEventListener('touchcancel', () => {
+  touchMode = null;
+});
 });
 
 
