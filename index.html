@@ -2133,7 +2133,7 @@ const Weapons = {
 
 
 
-    const skillsData = {
+       const skillsData = {
       Instincts: {
         "i1": { type: "Passive", name: "Damage I", branch: "[Damage Bonus]", desc: "Deal +2.5% Damage", icon: "Skill-Icons/DamageUp.png", cost: 1, requirement: [] },
         "i2": { type: "Passive", name: "Stagger Damage I", branch: "[Damage Bonus]", desc: "Deal +2.5% Stagger Damage", icon: "Skill-Icons/StaggerDamageUp.png", cost: 1, requirement: [] },
@@ -2171,8 +2171,8 @@ const Weapons = {
       },
       Fortitude: {
         "f1": { type: "Passive", name: "Defense Boost I", branch: "[Stat Bonus]", desc: "Increase Defense by 5%", icon: "Skill-Icons/DefenseBoost.png", cost: 1, requirement: [] },
-        "f2": { type: "Passive", name: "Health Boost I", branch: "[Stat Bonus]", desc: "Increase HP by 5%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: [] },
-        "f3": { type: "Passive", name: "Stagger Resistance I", branch: "[Stat Bonus]", desc: "Increase maximum Stagger by +5%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: [] },
+        "f2": { type: "Passive", name: "Health Boost I", branch: "[Stat Bonus]", desc: "Increase HP by 5%", icon: "Skill-Icons/HealthBoost.png", cost: 1, requirement: [] },
+        "f3": { type: "Passive", name: "Stagger Resistance I", branch: "[Stat Bonus]", desc: "Increase maximum Stagger by +5%", icon: "Skill-Icons/StaggerResist.png", cost: 1, requirement: [] },
         
         "f4": { type: "Auxilary Ability", name: "Brace Up", branch: "[Auxilary Ability]", desc: "[On Use] Gain 1 Resilence for 5 seconds", icon: "Skill-Icons/BraceUp.png", cost: 1, requirement: ["f1"] },
         "f5": { type: "Passive", name: "Lasting", branch: "[Protection]", desc: "Protection lasts +3 seconds longer", icon: "Skill-Icons/Lasting.png", cost: 1, requirement: ["f1"] },
@@ -2181,11 +2181,11 @@ const Weapons = {
         
         "f8": { type: "Passive", name: "Fortified", branch: "[Protection]", desc: "Protection will block an additional 15% damage", icon: "Skill-Icons/Fortified.png", cost: 1, requirement: ["f4", "f5"] },
         "f9": { type: "Passive", name: "Punch Up", branch: "[Health Difference]", desc: "Take -10% damage and deal +10% to enemies with higher HP% than you", icon: "Skill-Icons/PunchUp.png", cost: 1, requirement: ["f6"] },
-        "f10": { type: "Passive", name: "Health Boost II", branch: "[Stagger]", desc: "Increase HP by 5%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["f6"] },
-        "f11": { type: "Passive", name: "Stagger Resistance II", branch: "[Stagger]", desc: "Increase maximum Stagger by +5%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["f7"] },
+        "f10": { type: "Passive", name: "Health Boost II", branch: "[Stagger]", desc: "Increase HP by 5%", icon: "Skill-Icons/HealthBoost.png", cost: 1, requirement: ["f6"] },
+        "f11": { type: "Passive", name: "Stagger Resistance II", branch: "[Stagger]", desc: "Increase maximum Stagger by +5%", icon: "Skill-Icons/StaggerResist.png", cost: 1, requirement: ["f7"] },
         
         "f12": { type: "Passive", name: "Power Through", branch: "[Protection]", desc: "When taking damage, for every 5% of HP lost, gain 1 Protection up to 5", icon: "Skill-Icons/PowerThrough.png", cost: 1, requirement: ["f8"] },
-        "f13": { type: "Passive", name: "Die Hard", branch: "[Hard Stun Recover]", desc: "When recovering from knockdown, Stagger, or Panic, gain 2 Protection. At less than 50%, gain 3 Protection instead.", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["f9"] },
+        "f13": { type: "Passive", name: "Die Hard", branch: "[Hard Stun Recover]", desc: "When recovering from knockdown, Stagger, or Panic, gain 2 Protection. At less than 50%, gain 3 Protection instead.", icon: "Skill-Icons/DieHard.png", cost: 1, requirement: ["f9"] },
         "f13.5": { type: "Passive", name: "Deliverance", branch: "[Clash with Health Difference]", desc: "When succesfully reviving an ally, the ally will gain 2 Protection on next Combat Start", icon: "Skill-Icons/Deliverance.png", cost: 1, requirement: ["f10"] },
         "f14": { type: "Passive", name: "Reinforced Guard", branch: "[Guard]", desc: "Guarding attacks will grant you a 10% max HP shield (60s CD)", icon: "Skill-Icons/ReinfoceGuard.png", cost: 1, requirement: ["f10"] },
         "f15": { type: "Passive", name: "Shatterprof", branch: "[Stagger]", desc: "Stagger damage taken cannot exceed 50% Max Stagger at time", icon: "Skill-Icons/ShatterProof.png", cost: 1, requirement: ["f11"] },
@@ -2196,8 +2196,8 @@ const Weapons = {
         "f19": { type: "Passive", name: "Shrug Off", branch: "[Stagger]", desc: "Negate the very first instance of Stagger and gain Resilence afterwards", icon: "Skill-Icons/ShrugOff.png", cost: 2, requirement: ["f15"] },
         
         "f20": { type: "Passive", name: "Defense Boost II", branch: "[Stat Bonus]", desc: "Increase Defense by 5%", icon: "Skill-Icons/DefenseBoost.png", cost: 2, requirement: ["f16"] },
-        "f21": { type: "Passive", name: "Health Boost III", branch: "[Stat Bonus]", desc: "Increase HP by 5%", icon: "Skill-Icons/PlaceHolder.png", cost: 2, requirement: ["f17", "f18"] },
-        "f22": { type: "Passive", name: "Stagger Resistance III", branch: "[Stat Bonus]", desc: "Increase maximum Stagger by 5%", icon: "Skill-Icons/PlaceHolder.png", cost: 2, requirement: ["f19"] },
+        "f21": { type: "Passive", name: "Health Boost III", branch: "[Stat Bonus]", desc: "Increase HP by 5%", icon: "Skill-Icons/HealthBoost.png", cost: 2, requirement: ["f17", "f18"] },
+        "f22": { type: "Passive", name: "Stagger Resistance III", branch: "[Stat Bonus]", desc: "Increase maximum Stagger by 5%", icon: "Skill-Icons/StaggerResist.png", cost: 2, requirement: ["f19"] },
         
         "f23": { type: "Passive", name: "Thorns", branch: "[Shield & Protection]", desc: "When taking damage with a Shield or Protection, deal damage equal to 5% your maximum HP to the attacker (3s CD)", icon: "Skill-Icons/Thorns.png", cost: 2, requirement: ["f20"] },
         "f24": { type: "Passive", name: "Strong Arm", branch: "[Power Guard]", desc: "Power Guarding an attack inflict 1 Paralyze (3s CD) and deals an additional +5% Max Stagger Damage", icon: "Skill-Icons/StrongArm.png", cost: 2, requirement: ["f21"] },
@@ -2206,21 +2206,21 @@ const Weapons = {
         "p1": { type: "Passive", name: "Cooldown Boost I", branch: "[Cooldown Reduction]", desc: "Cooldowns are 5% faster", icon: "Skill-Icons/CooldownBoost.png", cost: 1, requirement: [] },
         "p2": { type: "Passive", name: "Sanity Boost I", branch: "[SP Bonus]", desc: "Heal +10% Sanity from all sources (rounded up)", icon: "Skill-Icons/SanityBoost.png", cost: 1, requirement: [] },
         
-        "p3": { type: "Auxilary Ability", name: "Recursive Thinking", branch: "[Ability]", desc: "[1] [On Use] Lose 15 SP\n[On Use] Reduce the cooldown of the last skill used by 40%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["p1"] },
+        "p3": { type: "Auxilary Ability", name: "Recursive Thinking", branch: "[Ability]", desc: "[1] [On Use] Lose 15 SP\n[On Use] Reduce the cooldown of the last skill used by 40%", icon: "Skill-Icons/Think.png", cost: 1, requirement: ["p1"] },
         "p4": { type: "Passive", name: "Cooldown Boost II", branch: "[Cooldown Reduction]", desc: "Cooldowns are 5% faster", icon: "Skill-Icons/CooldownBoost.png", cost: 1, requirement: ["p1"] },
         "p5": { type: "Passive", name: "Induction", branch: "[Cooldown Reduction]", desc: "When gaining SP, lower the current timer of a random skill cooldown by 15% of its original CD (5s CD)", icon: "Skill-Icons/Induction.png", cost: 1, requirement: ["p1"] },
         "p6": { type: "Passive", name: "Plunge", branch: "[Conditional Damage Buff]", desc: "Deal +10% damage to targets with Sinking", icon: "Skill-Icons/Plunge.png", cost: 1, requirement: ["p2"] },
         "p7": { type: "Passive", name: "Sanity Boost II", branch: "[SP Bonus]", desc: "Heal +10% Sanity from all sources (rounded up)", icon: "Skill-Icons/SanityBoost.png", cost: 1, requirement: ["p2"] },
-        "p8": { type: "Auxilary Ability", name: "Focus Burst", branch: "[Ability]", desc: "[Unclashable] [Multi-Hit]\n[1] [On Use] Lose 5 SP\n[On Hit] Inflict +2 Sinking Count and 1 Feeble for 5 seconds (8 Base DMG) (75%-90%)", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["p2"] },
+        "p8": { type: "Auxilary Ability", name: "Focus Burst", branch: "[Ability]", desc: "[Unclashable] [Multi-Hit]\n[1] [On Use] Lose 5 SP\n[On Hit] Inflict +2 Sinking Count and 1 Feeble for 5 seconds (8 Base DMG) (75%-90%)", icon: "Skill-Icons/FocusBurst.png", cost: 1, requirement: ["p2"] },
         
         "p9": { type: "Passive", name: "Supercede", branch: "[Cooldown Reduction]", desc: "When dodging an attack, if a cooldown is below 4s, reduce it by 100% (once per dodge)", icon: "Skill-Icons/Supercede.png", cost: 1, requirement: ["p4"] },
         "p10": { type: "Passive", name: "Left Side", branch: "[Cooldown Reduction]", desc: "At 8+ SP, when putting a Skill on cooldown, spend 8 SP to reduce it by 40%", icon: "Skill-Icons/LeftSide.png", cost: 1, requirement: ["p4", "p5"] },
         "p11": { type: "Passive", name: "Facade", branch: "[High SP Bonus]", desc: "At 20+ SP, cooldowns are 15% faster, but lose 4 SP when hit (45s CD when deactivated)", icon: "Skill-Icons/Facade.png", cost: 1, requirement: ["p5"] },
-        "p12": { type: "Passive", name: "Cascade", branch: "[SP Damage Bonus]", desc: "When you activate Sinking on enemy with <0 SP, deal +25% SP damage (rounded up)", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["p6"] },
+        "p12": { type: "Passive", name: "Cascade", branch: "[SP Damage Bonus]", desc: "When you activate Sinking on enemy with <0 SP, deal +25% SP damage (rounded up)", icon: "Skill-Icons/Cascade.png", cost: 1, requirement: ["p6"] },
         "p13": { type: "Passive", name: "Drown", branch: "[Panic Activation]", desc: "When you activate sinking on enemy with <-30 SP, forcibly activate panic on them (45s CD)", icon: "Skill-Icons/Drown.png", cost: 1, requirement: ["p6"] },
         "p14": { type: "Passive", name: "Ebb and Flow", branch: "[SP Balance]", desc: "At 0+ SP, take -10% damage. At <0 SP, take +10% damage", icon: "Skill-Icons/EbbFlow.png", cost: 1, requirement: ["p7"] },
         "p15": { type: "Passive", name: "Sticks and Stones", branch: "[Damage Reduction]", desc: "At 0+ SP, when taking damage greater than 5% of your max HP, consume 10 SP to reduce the damage by 50% and briefly provide flinch immunity (10s CD)", icon: "Skill-Icons/SticksNStones.png", cost: 1, requirement: ["p7"] },
-        "p16": { type: "Auxilary Ability", name: "Mind Blast", branch: "[Ability]", desc: "[Unclashable]\n[1] [On Use] Lose 10 SP\n[On Hit] Inflict 3 Sinking and +3 Sinking Count\n[On Hit] At 30+ SP, spend 5 SP to activate Sinking Deluge on target (10 Base DMG) (50%-100%)", icon: "Skill-Icons/MindBlast.png", cost: 1, requirement: ["p8"] },
+        "p16": { type: "Auxilary Ability", name: "Mind Blast", branch: "[Ability]", desc: "[Unclashable]\n[1] [On Use] Lose 10 SP\n[On Hit] Inflict 3 Sinking and +3 Sinking Count\n[On Hit] At 30+ SP, spend 5 SP to activate Sinking Deluge on target (10 Base DMG) (50%-100%)", icon: "Skill-Icons/MindBlast.png", cost: 3, requirement: ["p8"] },
         
         "p17": { type: "Passive", name: "Cognitive Bias", branch: "[Cooldown Reduction]", desc: "Final M1 reduces your current longest cooldown by 15% of its original CD and increases your shortest by 10%", icon: "Skill-Icons/CognitiveBias.png", cost: 1, requirement: ["p9"] },
         "p18": { type: "Passive", name: "Machine Learning", branch: "[Cooldown Reduction]", desc: "Winning 2 clashes in a row within 5 seconds reduces all skill cooldowns by 15% (6s CD)", icon: "Skill-Icons/MachineLearning.png", cost: 1, requirement: ["p9"] },
@@ -2238,7 +2238,7 @@ const Weapons = {
         "t4": { type: "Auxilary Ability", name: "Analyze Weakness", branch: "[Ability]", desc: "[Unclashable]\n[1] [On Use] Inflict 2 Fragile for 10 seconds (1 Base DMG) (1%-1%)", icon: "Skill-Icons/AnalyzeWeakness.png", cost: 1, requirement: ["t1"] },
         "t5": { type: "Passive", name: "Blaze", branch: "[Conditional Damage Buff]", desc: "Deal +5% damage to targets with Burn", icon: "Skill-Icons/Blaze.png", cost: 1, requirement: ["t1"] },
         "t6": { type: "Passive", name: "Overwhelm", branch: "[Strength]", desc: "When winning 2 clashes in a row within 5 seconds, gain 2 Strength for 5 seconds", icon: "Skill-Icons/Overwhelm.png", cost: 1, requirement: ["t2"] },
-        "t7": { type: "Auxilary Ability", name: "Ace up the Sleeve", branch: "[Ability]", desc: "[1] [On Use] Gain 10 Strength for 2 seconds\n[On Heads] Either gain 5 Feeble for 6 seconds or 2 Strength for 3 seconds\n[After Attack] Gain 20 Rupture and 2 Bind for 6 seconds", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["t2"] },
+        "t7": { type: "Auxilary Ability", name: "Ace up the Sleeve", branch: "[Ability]", desc: "[1] [On Use] Gain 10 Strength for 2 seconds\n[On Heads] Either gain 5 Feeble for 6 seconds or 2 Strength for 3 seconds\n[After Attack] Gain 20 Rupture and 2 Bind for 6 seconds", icon: "Skill-Icons/AceUp.png", cost: 1, requirement: ["t2"] },
         
         "t8": { type: "Passive", name: "Barbed", branch: "[Rupture]", desc: "On Clash Win, inflict +2 Rupture Count (6s CD)", icon: "Skill-Icons/Barbed.png", cost: 1, requirement: ["t3"] },
         "t9": { type: "Passive", name: "Vital Point", branch: "[Fragile]", desc: "Fragile inflicted by you last +3s longer", icon: "Skill-Icons/VitalPoint.png", cost: 1, requirement: ["t4"] },
@@ -2257,9 +2257,9 @@ const Weapons = {
         
         "t21": { type: "Passive", name: "Crumble", branch: "[M1 Buff]", desc: "Final M1 inflicts +1 Rupture Count and does not consume Rupture Count", icon: "Skill-Icons/Crumple.png", cost: 1, requirement: ["t14"] },
         "t22": { type: "Passive", name: "Lucky Number", branch: "[Rupture]", desc: "When attacking enemies with 5+ Rupture and +3 Rupture Count, multiply Rupture by 25%, then activate Rupture twice (30s CD)", icon: "Skill-Icons/LuckyNumbers.png", cost: 1, requirement: ["t14"] },
-        "t23": { type: "Passive", name: "Black Flame", branch: "[Burn]", desc: "When attacking enemies with 20+ Burn Potency, inflict (Potency / 10) Fragile for 7 seconds (max. 10, 60s CD)", icon: "Skill-Icons/PlaceHolder.png", cost: 2, requirement: ["t17"] },
+        "t23": { type: "Passive", name: "Black Flame", branch: "[Burn]", desc: "When attacking enemies with 20+ Burn Potency, inflict (Potency / 10) Fragile for 7 seconds (max. 10, 60s CD)", icon: "Skill-Icons/DarkFlames.png", cost: 2, requirement: ["t17"] },
         "t24": { type: "Passive", name: "Trailblaze", branch: "[Burn]", desc: "When attacking enemies with less than +3 Burn Count, inflict +2 Burn Count (45s CD)", icon: "Skill-Icons/TrailBlaze.png", cost: 1, requirement: ["t18"] },
-        "t25": { type: "Passive", name: "White Flame", branch: "[Burn]", desc: "When attacking enemies with 20+ Burn Potency, gain (Potency / 4) Healing for 2 seconds (max. 10, 60s CD)", icon: "Skill-Icons/PlaceHolder.png", cost: 2, requirement: ["t18"] },
+        "t25": { type: "Passive", name: "White Flame", branch: "[Burn]", desc: "When attacking enemies with 20+ Burn Potency, gain (Potency / 4) Healing for 2 seconds (max. 10, 60s CD)", icon: "Skill-Icons/WhiteFlames.png", cost: 2, requirement: ["t18"] },
         
         "t26": { type: "Passive", name: "Joy", branch: "[Rupture]", desc: "Every 30 seconds, inflict +3 Rupture Count to all nearby enemies", icon: "Skill-Icons/Joy.png", cost: 3, requirement: ["t21"] },
         "t27": { type: "Passive", name: "Serrated Edge", branch: "[Rupture]", desc: "When activating the final count of Rupture, multiply Rupture by 50% for that activation (15s CD)", icon: "Skill-Icons/SerratedEdge.png", cost: 2, requirement: ["t22"] },
@@ -2267,7 +2267,7 @@ const Weapons = {
       },
       Haste: {
         "h1": { type: "Passive", name: "Friction", branch: "[Conditional Damage Buff]", desc: "Consuming Charge gives 1 Strength for 2 seconds", icon: "Skill-Icons/Friction.png", cost: 1, requirement: [] },
-        "h2": { type: "Passive", name: "Speed Boost I", branch: "[Stat Bonus]", desc: "Increases movement speed by 5%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: [] },
+        "h2": { type: "Passive", name: "Speed Boost I", branch: "[Stat Bonus]", desc: "Increases movement speed by 5%", icon: "Skill-Icons/SpeedBoost.png", cost: 1, requirement: [] },
         "h3": { type: "Passive", name: "Evasion I", branch: "[Dodge]", desc: "Increase  dodge frames by 20% during Q dodge", icon: "Skill-Icons/Evasion.png", cost: 1, requirement: [] },
         "h4": { type: "Passive", name: "Critical Boost I", branch: "[Poise]", desc: "Crits deal an additional +5% damage", icon: "Skill-Icons/PoiseBoost.png", cost: 1, requirement: [] },
         
@@ -2275,16 +2275,16 @@ const Weapons = {
         "h5.5": { type: "Passive", name: "Grounding", branch: "[Charge]", desc: "When reaching <5 Charge Count, gain 3 Protection (12s CD)", icon: "Skill-Icons/Grounding.png", cost: 1, requirement: ["h1"] },
         "h6": { type: "Passive", name: "Quickness", branch: "[Haste]", desc: "Gain an additional +1.5% Speed boost per Haste (applies to attacks and movement)", icon: "Skill-Icons/Quickness.png", cost: 1, requirement: ["h2"] },
         "h7": { type: "Auxilary Ability", name: "Quick Attack", branch: "[Ability]", desc: "[1] [Before Hit] Deal +10% damage per Haste on self (max. 50%)\n[On Hit] Gain 1 Haste for 5 seconds (10 Base DMG) (50%-100%)", icon: "Skill-Icons/QuickAttack.png", cost: 1, requirement: ["h2"] },
-        "h8": { type: "Passive", name: "Momentum Shift", branch: "[Dodge]", desc: "Dodging an attack grants 3 Strength for 2 seconds (10s CD)", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["h3"] },
+        "h8": { type: "Passive", name: "Momentum Shift", branch: "[Dodge]", desc: "Dodging an attack grants 3 Strength for 2 seconds (10s CD)", icon: "Skill-Icons/MomentumShift.png", cost: 1, requirement: ["h3"] },
         "h9": { type: "Passive", name: "High-level Acrobatics", branch: "[Dodge]", desc: "Using your evasive (B) additionally grants 3 Haste for 5 seconds", icon: "Skill-Icons/Acrobatic.png", cost: 1, requirement: ["h3"] },
         "h10": { type: "Passive", name: "Unneving Agility", branch: "[Dodge]", desc: "Dodging an attack lowers the attacker's Sanity by 2. Increased to 5 for ranged attacks (4s CD)", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["h3"] },
-        "h11": { type: "Passive", name: "Harmony", branch: "[Poise]", desc: "On Crit and at +15 Poise, spend 2 Poise to gain 2 Protection, Haste, or Bolstered for 5 seconds (15s CD)", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["h4"] },
+        "h11": { type: "Passive", name: "Harmony", branch: "[Poise]", desc: "On Crit and at +15 Poise, spend 2 Poise to gain 2 Protection, Haste, or Bolstered for 5 seconds (15s CD)", icon: "Skill-Icons/Harmonica.png", cost: 1, requirement: ["h4"] },
         "h12": { type: "Passive", name: "Chaos", branch: "[Poise]", desc: "On Crit and at +15 Poise, spend 2 Poise to inflict 2 Fragile, Bind, or Impaired for 5 seconds (15s CD)", icon: "Skill-Icons/Chaos.png", cost: 1, requirement: ["h4"] },
         "h13": { type: "Passive", name: "Clear Mirror", branch: "[Poise]", desc: "On Crit, gain 2 Strength for 5 seconds (16s CD)", icon: "Skill-Icons/ClearMirror.png", cost: 1, requirement: ["h4"] },
        
         "h13.5": { type: "Passive", name: "Alternating Current", branch: "[Charge]", desc: "Attacks that consume Charge alternate between inflicting Fragile for 6 seconds and gaining 3 Defense Up for 6 seconds", icon: "Skill-Icons/AlteringCurrent.png", cost: 1, requirement: ["h5"] },
         "h14": { type: "Passive", name: "Defibrillator", branch: "[Charge]", desc: "Consuming Charge heals Maximum HP equal to (½ * Charge consumed)%", icon: "Skill-Icons/Defibrillator.png", cost: 1, requirement: ["h5.5"] },
-        "h15": { type: "Passive", name: "Speed Boost II", branch: "[Stat Bonus]", desc: "Increase movement speed by +5%", icon: "Skill-Icons/PlaceHolder.png", cost: 1, requirement: ["h6", "h7"] },
+        "h15": { type: "Passive", name: "Speed Boost II", branch: "[Stat Bonus]", desc: "Increase movement speed by +5%", icon: "Skill-Icons/SpeedBoost.png", cost: 1, requirement: ["h6", "h7"] },
         "h16": { type: "Passive", name: "Evasion II", branch: "[Dodges]", desc: "Increase dodge frames by 30% during Q dodge", icon: "Skill-Icons/Evasion.png", cost: 1, requirement: ["h8", "h9", "h10"] },
         "h17": { type: "Passive", name: "Criticality", branch: "[Poise]", desc: "On Crit and at +20 Poise spend 3 Poise to gain +1 Poise Count (2s CD)", icon: "Skill-Icons/Critically.png", cost: 2, requirement: ["h11", "h12"] },
         "h18": { type: "Passive", name: "Critical Finish", branch: "[M1 Buff]", desc: "Final M1 will always deal Critical Damage and gives +1 Poise Count", icon: "Skill-Icons/CriticalFinish.png", cost: 1, requirement: ["h13"] },
